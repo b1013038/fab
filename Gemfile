@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rmagick', require: 'RMagick'
+gem 'rmagick'
 gem 'webrick'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'

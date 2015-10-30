@@ -21,7 +21,7 @@ class PicController < ApplicationController
   end
   
   def icon
-    @pic = Paint.find(24)
+    @pic = Paint.find(2)
     send_data(Base64.decode64(@pic.filedata), :type => 'image/png', :disposition => 'inline')
   end
   private
