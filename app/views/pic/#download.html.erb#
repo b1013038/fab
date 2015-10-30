@@ -1,0 +1,4 @@
+<h1>Pic#download</h1>
+<p>Find me in app/views/pic/download.html.erb</p>
+
+<%= image_tag icon_user_path(1)%>

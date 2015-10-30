@@ -1,0 +1,6 @@
+<body bgcolor="#ff00ff" text="#000000" link="#0000ff" vlink="#800080" alink="#ff0000">
+<h1>Pic#download</h1>
+
+<p>Find me in app/views/pic/download.html.erb</p>
+<%= image_tag pic_icon_path(23)%>
+</body>

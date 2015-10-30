@@ -1,0 +1,12 @@
+class CreatePaints < ActiveRecord::Migration
+  def change
+    create_table :paints do |t|
+      t.string :userid, :limit => 10, null: false
+      t.integer :category, :limit => 2, null: false
+      t.string :title, :limit => 15, null: false
+      t.binary :filedata, null: false
+
+      t.timestamps null: false
+    end
+  end
+end

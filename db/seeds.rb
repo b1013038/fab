@@ -1,0 +1,12 @@
+# This file should contain all the record creation needed to seed the database with its default values.
+# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
+#
+# Examples:
+#
+#   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
+#   Mayor.create(name: 'Emanuel', city: cities.first)
+
+
+
+Login.create(:userid => 'iemon',:mysign => 1234)
+Paint.create(:userid => 'iemon', :category => 0, :title => 'hukujuen', :filedata => 'iVBORw0KGgoAAAANSUhEUgAAADcAAAAlCAYAAADmxXHWAAAFEElEQVRYR92ZeahVVRTGf1+DjTSPNNhgFBRFKpgWSSEpEamFWRhSVDRhiRZqUBFEmZZpgxRJgdJgRoVFIWUjJUWFVBYYNk8Y0ayU1YrP9r3cd9699+zzeu/xXuu/d99ae61v773W/tY6opckIvYBxgHDgaGA/94VELAB+BRYA7wCLJf0+X8NzQv3qETECcAsYDSwZaazAF4A5kpakWnTSa3HwEXEAcBC4LSuBpfsngcul7S26jo9Ai4ixgIPpGtXNaZm+r8BF0t6sMpi3Q4uIi4F7k65VCWWHN2Zkm7JUbROt4KLiAuB+3Kdd1FvuqR5ObbdBi4VjpcqFI2c+Jrp/A2MkfRc2QJZ4CLCeoOBYcCewEbgXeBlSRsjYvtUxg8qc9hN//8GOELSz+3WKwUXEeOBm7xYk4V+AG4Fdkzlvptiz1pmnqTpXQYXEbcB07Jc9b6SK+hASd+3ct3y5CJiJnBz78dcyeM0SbdXAhcRBwMfAttUctX7yqskjagKzjlmytTX5S8TBUm/NAu06bWMiHeAY/s6shTfMElvVgHnJN2tn4CbKOnRKuC+BPbrJ+AukHR/FXBuM07pJ+CmSLorC1xEXAHMBrbLBOdW5F7A1Gsd8GtiMUelduc8YOc2az0FPAa8Dph5/AHsARwDnA7Yvl0s7v2WAldJ+qrRT72gRIQbyUVpsRxcmwC/hfMlme81lYjYBbgemFpQ+ASYJGlVO2cRsS+wGBhVEpTZkvOvzjkbwd0BTMlBBRjMeEnLM/WJCJ/CI+kUfLqHSfo2xz5t/OPpJNuZeMPHSnrWSpvBRYRnG0/kOEo6cyTNaNRP5HoIcCDwBfB28UQj4mTg6QRwkaSLamukGYvJuW/QG5LWF9bfCfgI2KskTpPpwZLWKSIGAB8Ah2aC+9MOJPkabJaIcI74FD38qYkHPjOKZToizgCWAVsA1wD3AAuAcxv6S5/A1ZL8e10iwsTCBKNMVkgaY3ATgKbvRIsVXpV0YsGpC8KZLfR93adKcuLXNsNs3t2Exc/O/i1sR0ryNKxmZ2JhgpEjQw3OeTAxRzvpPCRpUgGcd3qrNmvcKOnago1HEZeV+F0gqV6I0g35LjPWOw3O12dgpoHVlkk6qxCoC8QOJWtMlrSk4RScW8+UvKezJdU5bkTsDWQVITfTBle268WYV0vqwDsjYj5wZRNwvwMrgVMB+xkt6cUGgO7gPdFyQSuK9YdIeq9B3x3Aa5kHscHg6rmQaWT9QZI+bnDqojQHuCS1SWbrfm+86w7OOe1C8hMwQpILWC2PXLEnu4AAR6affZs8q/TJ1iUi5vqxzowTg3O74DFBFVkq6eyiQaq8fnTXe7ZSOCGf4HGAx+THS3Ih6SAppwZI+rrJ/zyfeT/j+tdMNxmcGYKdVpVZkkzTSiUitk4U7fyGk5kg6a1S43+fGn9TcNU0pcuVNQZ3A3BdrkVB72HPWNoxjYhwfprYFjtm55Q3x4OeH1v5j4iRgFn/IRVjXGhwNjL5zf1IUfThIJ8EXCg+S19sTJQP93wROKkkKDMKk2fbm9k4TXZP+eexfCMxqIJveI1+eUrsafH/RVZKGlUD5657NeAvM/1d/Ob6CVnb2BUcnZK2Xe/V14H7CRonyeS844eQiPA74/wZ1NdRNInPb+g5tXanEzj/EBF+81w93dtt209Autdz1XZBq0u7ibPbGD/U/tzrlt+8zkykL4jzyg+6RxuLJXmA3En+AdZ4sD8FyrtLAAAAAElFTkSuQmCC')
