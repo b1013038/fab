@@ -1,8 +1,8 @@
 class CreateLogins < ActiveRecord::Migration
   def change
     create_table :logins do |t|
-      t.string :userid, :limit => 10, null: false
-      t.string :mysign, :limit => 8, null: false
+      t.string :userid, null: false
+      t.string :mysign, null: false
 
       t.timestamps null: false
     end

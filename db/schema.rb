@@ -11,22 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151028070801) do
+ActiveRecord::Schema.define(version: 20151112132859) do
 
   create_table "logins", force: :cascade do |t|
-    t.string   "userid",     null: false
-    t.string   "mysign",     null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "userid",     limit: 255,             null: false
+    t.string   "mysign",     limit: 255,             null: false
+    t.integer  "kie",        limit: 4,   default: 1, null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
   create_table "paints", force: :cascade do |t|
-    t.string   "userid",     null: false
-    t.integer  "category",   null: false
-    t.string   "title",      null: false
-    t.binary   "filedata",   null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "userid",     limit: 255, null: false
+    t.integer  "category",   limit: 4,   null: false
+    t.string   "title",      limit: 255, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+    t.string   "filedata",   limit: 255
   end
 
 end

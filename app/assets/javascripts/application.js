@@ -12,6 +12,5 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require potrace.js
 //= require turbolinks
 //= require_tree .

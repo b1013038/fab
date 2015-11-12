@@ -1,2 +1,6 @@
 <h1>Pic#show</h1>
 <p>Find me in app/views/pic/show.html.erb</p>
+<% @pic.each do |pic| %>
+  <h1><%= pic.title %></h1>
+  <p><%= pic.category %></p>
+<% end %>
