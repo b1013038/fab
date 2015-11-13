@@ -8,8 +8,12 @@ class PicController < ApplicationController
   def show
     # @pic = find(params[:userid])
     #send_data(Base64.decode64(Paint.find(:id).filedata), :type => 'image/png', :disposition => 'inline')
-    @pic = Paint.new
-    @pic = Paint.where(userid: params[:paint][:userid])
+#    @pic = Paint.new
+#    @pic = Paint.where(userid: params[:paint][:userid])
+    @show_img = Paint.new
+    @show_img = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
+    @show_img = @show_img.take
+    send_file("public/img/#{@show_img.title}.png", :disposition => 'inline')
   end
 
   def download
@@ -29,13 +33,15 @@ class PicController < ApplicationController
     #params[:paint][:aaa]
     @pic = Paint.new
     @pic.userid = params[:userid]
-    @pic.title = params[:title]
+    @pic.title = "#{params[:title]}_#{params[:userid]}" + Time.now.strftime("%y%m%H%M%S")
     file = Base64.decode64(params[:filedata])
-    @name = @pic.title + "_" + @pic.userid + "_" + Time.now.strftime("%y%m%H%M%S")
-    File.open("public/img/#{@name}.png", 'wb') { |f|
+    # name = "@pic.userid_@pic.title"
+    File.open("public/img/#{@pic.title}.png", 'wb') { |f|
       f.write(file)
     }
-    @pic.filedata = "http://paint.fablabhakodate.org/#{params[:userid]}/#{params[:title]}"
+    file_path = URI.escape(params[:userid]) + '/' + URI.escape(@pic.title) + '.png'
+  #  @pic.filedata = "http://paint.fablabhakodate.org/params[:userid]/params[:title].png"
+    @pic.filedata = "http://paint.fablabhakodate.org/show/" + file_path
     @pic.category = params[:category]
     @pic.save
     redirect_to root_path
@@ -88,10 +94,6 @@ class PicController < ApplicationController
       @user.kie = cookies[:_ryokutya_session]
       @user.save
     end 
-  end
-
-  def show_pic
-
   end
   
   def icon

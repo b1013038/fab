@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   root :to => 'pic#index'
 
-  get ':userid/show/:id' => 'pic#img_show'
+  get 'show/:userid/:title' => 'pic#show'
 
   get 'download' => 'pic#download'
 
@@ -13,11 +13,11 @@ Rails.application.routes.draw do
 
   post 'pic/addpic' => 'pic#create'
 
-  post 'pic/addusr' => 'pic#add_user'
+  post 'pic/adduser' => 'pic#add_user'
 
-  post 'pic/authusr' => 'pic#auth_user'
+  post 'pic/authuser' => 'pic#auth_user'
 
-
+  post 'pic/loginuser' => 'pic#login_user'
 #test routes
 
 #  post 'pic/index' => 'pic#show'

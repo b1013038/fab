@@ -1,6 +1,7 @@
 <h1>Pic#index</h1>
 <p>Find me in app/views/pic/index.html.erb</p>
 
+
 <%= image_tag(asset_path("asdfgh_adaa_1511235430.png")) %>
 
 <%= form_tag(:action => :create) do %>
