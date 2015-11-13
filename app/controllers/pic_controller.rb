@@ -1,3 +1,5 @@
+# coding: utf-8
+
 class PicController < ApplicationController
   def index
     @pic = Paint.new
@@ -24,20 +26,23 @@ class PicController < ApplicationController
   end
   
   def create
+    #params[:paint][:aaa]
     @pic = Paint.new
-    @pic.userid = params[:paint][:userid]
-    @pic.title = params[:paint][:title]
-    file = Base64.decode64(params[:paint][:filedata])
+    @pic.userid = params[:userid]
+    @pic.title = params[:title]
+    file = Base64.decode64(params[:filedata])
     @name = @pic.title + "_" + @pic.userid + "_" + Time.now.strftime("%y%m%H%M%S")
     File.open("public/img/#{@name}.png", 'wb') { |f|
       f.write(file)
     }
-    @pic.filedata = "http://paint.fablabhakodate.org/pic/#{params[:paint][:userid]}/#{params[:paint][:title]}"
-    @pic.category = params[:paint][:category]
+    @pic.filedata = "http://paint.fablabhakodate.org/#{params[:userid]}/#{params[:title]}"
+    @pic.category = params[:category]
     @pic.save
+    redirect_to root_path
   end
   
   def convert
+    #filepath = "public/img" + Paint.find(params[:id])
     @filename = Paint.select("filedata")
     @image = Magick::Image.read(@filename)[0]
     @image.format = "svg"
@@ -54,21 +59,39 @@ class PicController < ApplicationController
     @_pdf = @_svg.to_blob
     send_data(@_pdf, :type => "message/pdf", :filename => "convert.pdf", :disposition => 'attachment')
   end
- 
-  def img_user
+
+  def to_blob
+    
   end
 
-  def img_show
-    @pic = Paint.new
-    if @pic = Paint.where(userid: params[:userid]) == nil
-      redirect_to '/pic/index'
+  def auth_user
+  end
+
+  def login_user
+    if user = Login.authenticate(params[:userid], params[:password])
+      if cookies[:_ryokutya_session] != user.kie
+        Login.update(user.id, :kie => cookies[:_ryokutya_session])
+      end
     end
-    #    @pic = Pic.where(userid: params[:userid])
-    if @pic.find(params[:id]) == nil
-      redirect_to '/pic/index'
-    end
-    
-    send_data(Base64.decode64(@pic.filedata), :type => 'image/png', filename: params[:title])
+    redirect_to :action => "index"
+  end
+  
+  def logout_user
+    Login.update(user.id, :kie => 1)
+  end
+
+  def add_user
+    if Login.find_by_userid(params[:userid]) == nil && params[:userid] != nil && params[:password] != nil
+      @user = Login.new
+      @user.userid = params[:userid]
+      @user.password = params[:password]
+      @user.kie = cookies[:_ryokutya_session]
+      @user.save
+    end 
+  end
+
+  def show_pic
+
   end
   
   def icon
@@ -77,9 +100,10 @@ class PicController < ApplicationController
     @pic.find(params[:id])
     send_data(Base64.decode64(@pic.filedata), :disposition => 'inline')
   end
+
   private
   def user_params
     params.require(:paint).permit(:title, :userid, :filedata, :category)
-    param.require(:login).permit(:userid, :mysign)
+    param.require(:login).permit(:userid, :password_hash, :password_salt)
   end
 end

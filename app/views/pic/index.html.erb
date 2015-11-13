@@ -1,5 +1,7 @@
 <h1>Pic#index</h1>
 <p>Find me in app/views/pic/index.html.erb</p>
+<%= @current_user %>
+
 <%= image_tag(asset_path("asdfgh_adaa_1511235430.png")) %>
 
 <%= form_for @pic,:url => {:action => :create} do |f| %>
@@ -8,4 +10,16 @@
 <%= f.number_field :category %>
 <%= f.text_area :filedata %>
 <%= f.submit %>
+<% end %>
+
+<%= form_tag(:action => :login_user) do %>
+<%= text_field_tag :userid  %>
+<%= text_field_tag :password %>
+<%= submit_tag "aaaa" %>
+<% end %>
+
+<%= form_tag(:action => :add_user) do %>
+<%= text_field_tag :userid  %>
+<%= text_field_tag :password %>
+<%= submit_tag "bbbb" %>
 <% end %>

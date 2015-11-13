@@ -1,18 +1,27 @@
-#Pic::Application.routes.draw do
 Rails.application.routes.draw do
   root :to => 'pic#index'
 
-  get 'pic/:userid/show/:id' => 'pic#img_show'
-  #get 'pic/show'
+  get ':userid/show/:id' => 'pic#img_show'
 
-  get 'pic/download'
-  get 'pic/convert' => 'pic#convert'
+  get 'download' => 'pic#download'
 
-  get 'pic/:userid/download/:id' => 'pic#download'
-  get 'pic/icon' => 'pic#icon'
+  get 'convert' => 'pic#convert'
 
-  post 'pic/index' => 'pic#create'
+  get ':userid/download/:id' => 'pic#download'
+
+#  get 'pic/icon' => 'pic#icon'
+
+  post 'pic/addpic' => 'pic#create'
+
+  post 'pic/addusr' => 'pic#add_user'
+
+  post 'pic/authusr' => 'pic#auth_user'
+
+
+#test routes
+
 #  post 'pic/index' => 'pic#show'
+
 
   
   # The priority is based upon order of creation: first created -> highest priority.
