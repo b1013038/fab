@@ -2,31 +2,20 @@
 
 class PicController < ApplicationController
   def index
+    #redirect_to :action => 'auth_user?'
     @pic = Paint.new
   end
 
   def show
-    # @pic = find(params[:userid])
-    #send_data(Base64.decode64(Paint.find(:id).filedata), :type => 'image/png', :disposition => 'inline')
-#    @pic = Paint.new
-#    @pic = Paint.where(userid: params[:paint][:userid])
-    @show_img = Paint.new
-    @show_img = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
-    @show_img = @show_img.take
-    send_file("public/img/#{@show_img.title}.png", :disposition => 'inline')
+    @pic = Paint.new
+    @pic = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
+    @pic = @pic.take
+    send_file("public/img/#{@pic.title}.png", :disposition => 'inline')
   end
 
   def download
-    
-    #    require 'RMagick'
-    #    file = open(/assets/images/remonn.rb)
-    #    base64_text = file.read
-    #    print base64_text
-    # binary_data = base64_data.unpack('m')[0]
-    #imagelist = RMagick::ImageList.new
-    #imagelist.from_blob(binary_data)
-    #    file.close
-    
+    @pic = Paint.new
+    @pic = Paint.where(userid: params[:userid])
   end
   
   def create
@@ -35,12 +24,10 @@ class PicController < ApplicationController
     @pic.userid = params[:userid]
     @pic.title = "#{params[:title]}_#{params[:userid]}" + Time.now.strftime("%y%m%H%M%S")
     file = Base64.decode64(params[:filedata])
-    # name = "@pic.userid_@pic.title"
     File.open("public/img/#{@pic.title}.png", 'wb') { |f|
       f.write(file)
     }
     file_path = URI.escape(params[:userid]) + '/' + URI.escape(@pic.title) + '.png'
-  #  @pic.filedata = "http://paint.fablabhakodate.org/params[:userid]/params[:title].png"
     @pic.filedata = "http://paint.fablabhakodate.org/show/" + file_path
     @pic.category = params[:category]
     @pic.save
@@ -48,8 +35,9 @@ class PicController < ApplicationController
   end
   
   def convert
-    #filepath = "public/img" + Paint.find(params[:id])
-    @filename = Paint.select("filedata")
+    @pic = Paint.new
+    @pic = Paint.find(params[:id])
+    filepath = "public/img/#{@pic.title}.png"
     @image = Magick::Image.read(@filename)[0]
     @image.format = "svg"
     @_png = @image.to_blob.to_s
@@ -71,15 +59,29 @@ class PicController < ApplicationController
   end
 
   def auth_user
-  end
-
-  def login_user
-    if user = Login.authenticate(params[:userid], params[:password])
-      if cookies[:_ryokutya_session] != user.kie
-        Login.update(user.id, :kie => cookies[:_ryokutya_session])
+    if cookies[:_ryokutya_session].present?
+      if session[:session_id] == cookies[:_ryokutya_session]
+        if user = Login.find(kie: session[:data])
+          self.current_user = user
+        else
+          self.current_user = nil
+        end
       end
     end
-    redirect_to :action => "index"
+  end
+  
+  def current_user=(user)
+    @current_user = user
+  end
+  
+  def login_user
+    if user = Login.authenticate(params[:userid], params[:password])
+      #if cookies[:_ryokutya_session] != user.kie
+        Login.update(user.id, :kie => session[:data])
+      self.current_user = user
+    else
+    #redirect_to 
+    end
   end
   
   def logout_user
@@ -98,7 +100,6 @@ class PicController < ApplicationController
   
   def icon
     @pic = Pic.all
-#    @pic = Pic.where(userid: params[:userid])
     @pic.find(params[:id])
     send_data(Base64.decode64(@pic.filedata), :disposition => 'inline')
   end

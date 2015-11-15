@@ -3,11 +3,13 @@ Rails.application.routes.draw do
 
   get 'show/:userid/:title' => 'pic#show'
 
-  get 'download' => 'pic#download'
+#  get 'download' => 'pic#download'
 
   get 'convert' => 'pic#convert'
 
-  get ':userid/download/:id' => 'pic#download'
+#  get ':userid/download/:id' => 'pic#download'
+
+  get 'download/:userid' => 'pic#download'
 
 #  get 'pic/icon' => 'pic#icon'
 
@@ -15,7 +17,7 @@ Rails.application.routes.draw do
 
   post 'pic/adduser' => 'pic#add_user'
 
-  post 'pic/authuser' => 'pic#auth_user'
+  get 'pic/authuser' => 'pic#auth_user'
 
   post 'pic/loginuser' => 'pic#login_user'
 #test routes
