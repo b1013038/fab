@@ -1,0 +1,12 @@
+<% if logged_in? && current_user.userid == params[:userid] %>
+Welcome, <%= current_user.userid %>'s contents page<br>
+<br>
+<% @img.each do |img| %>
+<%= image_tag "/img/#{img.title}.png" %><br>
+<%= img.title %><br>
+<% end %><br>
+
+<% else %>
+sample
+
+<% end %>

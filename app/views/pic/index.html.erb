@@ -3,20 +3,31 @@
 <br>
 No "data:image/png;base64,"
 <br>
-<%= image_tag(asset_path("asdfgh_adaa_1511235430.png")) %>
+<%= image_tag(asset_path("asdfgh_adaa_1511235430.png")) %><br>
 
+<br>
+<% if logged_in? %>
+
+Welcome, <%= current_user.userid %><br>
+<%= link_to 'my contents', :action => 'img_show', :userid => current_user.userid %>
+<%= link_to 'logout', :action => 'logout_user' %>
+
+<% else %>
+
+<%= form_tag(:action => :login_user) do %>
+<%= text_field_tag :userid  %>
+<%= text_field_tag :password %>
+<%= submit_tag "login" %>
+<% end %>
+
+<% end %>
+<br>
 <%= form_tag(:action => :create) do %>
 <%= text_field_tag :userid %>
 <%= text_field_tag :title %>
 <%= number_field_tag :category %>
 <%= text_area_tag :filedata %>
 <%= submit_tag "images" %>
-<% end %>
-
-<%= form_tag(:action => :login_user) do %>
-<%= text_field_tag :userid  %>
-<%= text_field_tag :password %>
-<%= submit_tag "login" %>
 <% end %>
 
 <%= form_tag(:action => :add_user) do %>

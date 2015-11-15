@@ -1,0 +1,13 @@
+<% if logged_in? && current_user.userid == params[:userid] %>
+Welcome, <%= current_user.userid %>'s contents page<br>
+<br>
+<% @img.each do |img| %>
+<%= link_to (image_tag "/img/#{img.title}.png") %><br>
+<%= img.title %><br>
+<% end %><br>
+
+<% else %>
+Only <%= params[:userid]  %> available.
+<% end %>
+
+<%= link_to "home", :action => "index" %>

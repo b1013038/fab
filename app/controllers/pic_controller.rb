@@ -1,6 +1,8 @@
 # coding: utf-8
 
 class PicController < ApplicationController
+  helper_method :current_user, :logged_in?
+
   def index
     #redirect_to :action => 'auth_user?'
     @pic = Paint.new
@@ -13,6 +15,11 @@ class PicController < ApplicationController
     send_file("public/img/#{@pic.title}.png", :disposition => 'inline')
   end
 
+  def img_show
+    @img = Paint.where(userid: params[:userid])
+    #send_file("public/img/{img.title}.png", :disposition => 'inline')
+  end
+
   def download
     @pic = Paint.new
     @pic = Paint.where(userid: params[:userid])
@@ -22,7 +29,7 @@ class PicController < ApplicationController
     #params[:paint][:aaa]
     @pic = Paint.new
     @pic.userid = params[:userid]
-    @pic.title = "#{params[:title]}_#{params[:userid]}" + Time.now.strftime("%y%m%H%M%S")
+    @pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
     file = Base64.decode64(params[:filedata])
     File.open("public/img/#{@pic.title}.png", 'wb') { |f|
       f.write(file)
@@ -37,63 +44,94 @@ class PicController < ApplicationController
   def convert
     @pic = Paint.new
     @pic = Paint.find(params[:id])
-    filepath = "public/img/#{@pic.title}.png"
-    @image = Magick::Image.read(@filename)[0]
-    @image.format = "svg"
-    @_png = @image.to_blob.to_s
-    @_png = @_png.split(" cy=\""+(@image.rows - 1).to_s , 2)
+    _filepath = "public/img/#{@pic.title}.png"
+    image = Magick::Image.read(_filepath)[0]
+    image.format = "svg"
+    _png = image.to_blob.to_s
+    _png = _png.split(" cy=\""+(image.rows - 1).to_s , 2)
     @_png.delete_at(-1)
-    @str = @_png.join
+    _str = _png.join
     14.times{|f|
-      @str.chop!
+      _str.chop!
     }
-    @str = @str + "</svg>"
-    @_svg = Magick::Image.from_blob(@str)[0]
-    @_svg.format = "pdf"
-    @_pdf = @_svg.to_blob
-    send_data(@_pdf, :type => "message/pdf", :filename => "convert.pdf", :disposition => 'attachment')
+    _str = _str + "</svg>"
+    _svg = Magick::Image.from_blob(_str)[0]
+    _svg.format = "pdf"
+    _pdf = _svg.to_blob
+    send_data(_pdf, :type => "message/pdf", :filename => "convert.pdf", :disposition => 'attachment')
   end
 
   def to_blob
     
   end
 
+  def forgot_passwd
+    @user = Login.new
+    if @user = Login.find_by_userid(params[:userid]) != nil
+      @user.password = params[:password]
+      @user.save
+    end
+  end
+
   def auth_user
     if cookies[:_ryokutya_session].present?
       if session[:session_id] == cookies[:_ryokutya_session]
-        if user = Login.find(kie: session[:data])
-          self.current_user = user
+        if user = Login.find(kie: session[:session_id])
+       #   self.current_user = user
         else
-          self.current_user = nil
+       #   self.current_user = nil
         end
       end
+    end
+  end
+  
+  def current_user
+    if session[:session_id]
+      @current_user ||= Login.find_by_kie(cookies[:_ryokutya_session])
     end
   end
   
   def current_user=(user)
     @current_user = user
   end
-  
+
+  def logged_in?
+    current_user != nil
+  end
+
   def login_user
+    user = Login.new
+    #cookies.delete :_ryokutya_session
+    session[:session_id] = cookies[:_ryokutya_session]
     if user = Login.authenticate(params[:userid], params[:password])
       #if cookies[:_ryokutya_session] != user.kie
-        Login.update(user.id, :kie => session[:data])
+      if same_kie = Login.where(kie: cookies[:_ryokutya_session])
+      #Login.update_all(['kie = ?', nil], ['kie = ?', cookies[:_ryokutya_session]])
+        same_kie.update_all(kie: nil)
+      end
+      Login.update(user.id, :kie => cookies[:_ryokutya_session])
+      # @user.kie = session[:data]
+      # @user.save
       self.current_user = user
     else
-    #redirect_to 
+    redirect_to 'http://fablabhakodate.org/' 
     end
+    redirect_to 'http://paint.fablabhakodate.org/'
   end
   
   def logout_user
-    Login.update(user.id, :kie => 1)
+    session[:session_id] = nil
+    cookies.delete :_ryokutya_session
+    redirect_to root_path
   end
 
   def add_user
     if Login.find_by_userid(params[:userid]) == nil && params[:userid] != nil && params[:password] != nil
+      session[:session_id] = cookies[:_ryokutya_session]
       @user = Login.new
       @user.userid = params[:userid]
       @user.password = params[:password]
-      @user.kie = cookies[:_ryokutya_session]
+      @user.kie = session[:session_id]
       @user.save
     end 
   end
@@ -107,6 +145,6 @@ class PicController < ApplicationController
   private
   def user_params
     params.require(:paint).permit(:title, :userid, :filedata, :category)
-    param.require(:login).permit(:userid, :password_hash, :password_salt)
+    param.require(:login).permit(:userid, :password_hash, :password_salt, :kie)
   end
 end

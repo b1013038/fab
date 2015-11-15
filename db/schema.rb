@@ -11,15 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151113101731) do
+ActiveRecord::Schema.define(version: 20151115152539) do
 
   create_table "logins", force: :cascade do |t|
-    t.string   "userid",        limit: 255, null: false
+    t.string   "userid",        limit: 255,   null: false
     t.string   "password_hash", limit: 255
     t.string   "password_salt", limit: 255
-    t.string   "kie",           limit: 255
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "kie",           limit: 65535
   end
 
   create_table "paints", force: :cascade do |t|

@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   root :to => 'pic#index'
 
-  get 'show/:userid/:title' => 'pic#show'
+  get 'show/:userid/:id/:title' => 'pic#show'
+
+  get 'show/:userid/' => 'pic#img_show'
 
 #  get 'download' => 'pic#download'
 
@@ -11,15 +13,17 @@ Rails.application.routes.draw do
 
   get 'download/:userid' => 'pic#download'
 
+  get 'logoutuser' => 'pic#logout_user'
+
 #  get 'pic/icon' => 'pic#icon'
 
-  post 'pic/addpic' => 'pic#create'
+  post 'addpic' => 'pic#create'
 
-  post 'pic/adduser' => 'pic#add_user'
+  post 'adduser' => 'pic#add_user'
 
-  get 'pic/authuser' => 'pic#auth_user'
+  get 'authuser' => 'pic#auth_user'
 
-  post 'pic/loginuser' => 'pic#login_user'
+  post 'loginuser' => 'pic#login_user'
 #test routes
 
 #  post 'pic/index' => 'pic#show'
