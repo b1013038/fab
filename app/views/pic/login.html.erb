@@ -1,0 +1,11 @@
+<% if logged_in? %>
+もう<%= current_user.userid %>でログインしてるよ<br>
+<% else %>
+平文での通信だから個人情報に関わらない程度のものを<br>
+<%= form_tag(:action => :login_user) do %>
+ユーザーID <%= text_field_tag :userid  %><br>
+パスワード <%= text_field_tag :password %><br>
+<%= submit_tag "login" %>
+<% end %>
+<% end %>
+<%= link_to "home", :action => "index" %>

@@ -1,0 +1,12 @@
+平文での通信だから個人情報に関わらないものを<br>
+<% if logged_in? %>
+もう<%= current_user.userid %>でログインしてるから作らなくていいんじゃないかな？<br>
+<% else %>
+<%= form_tag(:action => :add_user) do %>
+ユーザーID <%= text_field_tag :userid  %><br>
+パスワード <%= text_field_tag :password %><br>
+<%= submit_tag "新規作成" %><br>
+<% end %>
+<% end %>
+<%= link_to "home", action: "index" %><br>
+もうアカウントあるよ→ <%= link_to "サインイン", action: "login" %>

@@ -1,0 +1,14 @@
+<% if logged_in? %>
+もう<%= current_user.userid %>でログインしてるよ<br>
+<% else %>
+平文での通信だから個人情報に関わらない程度のものを<br>
+<%= form_tag(:action => :forgot_passwd) do %>
+ユーザーID <%= text_field_tag :userid  %><br>
+新しいパスワード <%= text_field_tag :password %><br>
+Solve following questions.<br>
+What is the smallest Sierpiński number?<br>
+<%= number_field_tag :question  %>
+<%= submit_tag "パスワード再設定" %>
+<% end %>
+<% end %>
+<%= link_to "home", :action => "index" %>

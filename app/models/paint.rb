@@ -5,4 +5,6 @@ class Paint < ActiveRecord::Base
     :username => "necter",
     :password => "160504"
   )
+
+validates :userid, :category, :filedata, :title, presence: true
 end

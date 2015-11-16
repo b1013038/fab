@@ -5,17 +5,25 @@ Rails.application.routes.draw do
 
   get 'show/:userid/' => 'pic#img_show'
 
+  get 'login' => 'pic#login'
+
+  get 'register' => 'pic#register'
+
+  get 'forgotpassword' => 'pic#forgot'
+
 #  get 'download' => 'pic#download'
 
   get 'convert' => 'pic#convert'
 
 #  get ':userid/download/:id' => 'pic#download'
 
-  get 'download/:userid' => 'pic#download'
+  get 'download/:userid/:id' => 'pic#download'
 
   get 'logoutuser' => 'pic#logout_user'
 
 #  get 'pic/icon' => 'pic#icon'
+
+  post 'forgot' => 'pic#forgot_passwd'
 
   post 'addpic' => 'pic#create'
 
@@ -24,6 +32,7 @@ Rails.application.routes.draw do
   get 'authuser' => 'pic#auth_user'
 
   post 'loginuser' => 'pic#login_user'
+
 #test routes
 
 #  post 'pic/index' => 'pic#show'

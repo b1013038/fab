@@ -9,6 +9,7 @@ class Login < ActiveRecord::Base
   attr_accessor :password
   before_save :encrypt_password
 
+  validates :userid, :password_salt, :password_hash, :kie, presence: true
   validates_confirmation_of :password
 
   def encrypt_password

@@ -9,10 +9,11 @@ class PicController < ApplicationController
   end
 
   def show
-    @pic = Paint.new
-    @pic = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
-    @pic = @pic.take
-    send_file("public/img/#{@pic.title}.png", :disposition => 'inline')
+    pic = Paint.new
+#    @pic = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
+    pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
+   # pic = @pic.take
+    send_file("public/img/#{pic.title}.png", :disposition => 'inline')
   end
 
   def img_show
@@ -21,8 +22,10 @@ class PicController < ApplicationController
   end
 
   def download
-    @pic = Paint.new
-    @pic = Paint.where(userid: params[:userid])
+   # @pic = Paint.new
+    if @pic = Paint.find(params[:id])
+     # send_data("img/{pic.filedata}.png", :type => 'image/png', :disposition => 'inline')
+    end
   end
   
   def create
@@ -38,18 +41,18 @@ class PicController < ApplicationController
     @pic.filedata = "http://paint.fablabhakodate.org/show/" + file_path
     @pic.category = params[:category]
     @pic.save
-    redirect_to root_path
+    redirect_to action: "index"
   end
   
   def convert
-    @pic = Paint.new
-    @pic = Paint.find(params[:id])
-    _filepath = "public/img/#{@pic.title}.png"
+   # @pic = Paint.new
+   # @pic = Paint.find(params[:id])
+    _filepath = "public/img/#{params[:title]}.png"
     image = Magick::Image.read(_filepath)[0]
     image.format = "svg"
     _png = image.to_blob.to_s
     _png = _png.split(" cy=\""+(image.rows - 1).to_s , 2)
-    @_png.delete_at(-1)
+    _png.delete_at(-1)
     _str = _png.join
     14.times{|f|
       _str.chop!
@@ -62,15 +65,21 @@ class PicController < ApplicationController
   end
 
   def to_blob
-    
+    @file = File.open("/img/#{params[:title]}.png").read
   end
 
   def forgot_passwd
-    @user = Login.new
-    if @user = Login.find_by_userid(params[:userid]) != nil
-      @user.password = params[:password]
-      @user.save
+    #params[:question]
+    gogo_tea = nil
+    if gogo_tea
+      @user = Login.new
+      if @user = Login.find_by_userid(params[:userid]) != nil
+        @user.password = params[:password]
+        @user.save
+        #redirect_to action: "index"
+      end
     end
+    redirect_to action: "index"
   end
 
   def auth_user
@@ -102,27 +111,28 @@ class PicController < ApplicationController
   def login_user
     user = Login.new
     #cookies.delete :_ryokutya_session
-    session[:session_id] = cookies[:_ryokutya_session]
-    if user = Login.authenticate(params[:userid], params[:password])
-      #if cookies[:_ryokutya_session] != user.kie
-      if same_kie = Login.where(kie: cookies[:_ryokutya_session])
-      #Login.update_all(['kie = ?', nil], ['kie = ?', cookies[:_ryokutya_session]])
-        same_kie.update_all(kie: nil)
+    #session[:session_id] = cookies[:_ryokutya_session]
+    if params[:userid] !=nil && params[:password] != nil
+      if user = Login.authenticate(params[:userid], params[:password])
+        #if cookies[:_ryokutya_session] != user.kie
+        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
+          #Login.update_all(['kie = ?', nil], ['kie = ?', cookies[:_ryokutya_session]])
+          same_kie.update_all(kie: nil)
+        end
+        Login.update(user.id, :kie => cookies[:_ryokutya_session])
+        # @user.kie = session[:data]
+        # @user.save
+        session[:session_id] = cookies[:_ryokutya_session]
+        self.current_user = user
       end
-      Login.update(user.id, :kie => cookies[:_ryokutya_session])
-      # @user.kie = session[:data]
-      # @user.save
-      self.current_user = user
-    else
-    redirect_to 'http://fablabhakodate.org/' 
     end
-    redirect_to 'http://paint.fablabhakodate.org/'
+    redirect_to action: "index"
   end
   
   def logout_user
     session[:session_id] = nil
     cookies.delete :_ryokutya_session
-    redirect_to root_path
+    redirect_to action: "index"
   end
 
   def add_user
@@ -133,13 +143,14 @@ class PicController < ApplicationController
       @user.password = params[:password]
       @user.kie = session[:session_id]
       @user.save
+redirect_to action: "index"
     end 
   end
   
   def icon
-    @pic = Pic.all
-    @pic.find(params[:id])
-    send_data(Base64.decode64(@pic.filedata), :disposition => 'inline')
+    pic = Paint.find(params[:id])
+ #   @pic.find(params[:id])
+    send_data(Base64.decode64(pic.filedata), :disposition => 'inline')
   end
 
   private

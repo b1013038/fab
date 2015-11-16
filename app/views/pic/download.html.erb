@@ -2,14 +2,10 @@
   <HEAD>
     <TITLE>test download</TITLE>
   </HEAD>
-  <BODY>
-<% params[:userid]+"'s contents" %>
-<%= @pic.each do |pic| %>
-<%= pic.title %><br>
-<%= pic.category %><br>
-<%= link_to image_tag(pic.filedata), :controller => "pic", :action => "convert", id: pic.id %><br>
-<% end %>
-    <%= link_to "download pdf",{:action=> "convert"} %>
+  <BODY>    
+    <%= image_tag("/img/#{params[:title]}.png") %><br>
+    <%= link_to "download pdf", :action=> "convert", id: @pic.id %><br>
+    <%= link_to "contents page", :action=> "img_show", userid: params[:userid] %>
   </BODY>
   
 </HTML>
