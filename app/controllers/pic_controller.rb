@@ -1,6 +1,7 @@
 # coding: utf-8
 
 class PicController < ApplicationController
+  #force_ssl
   helper_method :current_user, :logged_in?
 
   def index
@@ -9,16 +10,35 @@ class PicController < ApplicationController
   end
 
   def show
-    pic = Paint.new
-#    @pic = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
-    pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
+    
+ #   @pic = Paint.new
+    #    @pic = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
+#    @pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
    # pic = @pic.take
-    send_file("public/img/#{pic.title}.png", :disposition => 'inline')
+    if params[:id]
+      pic = Paint.find(params[:id])
+    else
+      pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
+    @blob = Base64.encode64(File.open("public/img/#{pic.title}.png").read)
+    end
+    respond_to do |format|
+      format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
+      format.json
+    end
   end
-
+  
   def img_show
-    @img = Paint.where(userid: params[:userid])
+   # @img = Paint.where(userid: params[:userid])
     #send_file("public/img/{img.title}.png", :disposition => 'inline')
+    if params[:category]
+      @img = Paint.where(category: params[:category])
+    else
+      @img = Paint.where(userid: params[:userid])
+    end
+    respond_to do |format|
+      format.html
+      format.json
+    end
   end
 
   def download
@@ -61,11 +81,7 @@ class PicController < ApplicationController
     _svg = Magick::Image.from_blob(_str)[0]
     _svg.format = "pdf"
     _pdf = _svg.to_blob
-    send_data(_pdf, :type => "message/pdf", :filename => "convert.pdf", :disposition => 'attachment')
-  end
-
-  def to_blob
-    @file = File.open("/img/#{params[:title]}.png").read
+    send_data(_pdf, :type => "message/pdf", :filename => "convert#{params_[:title]}.pdf", :disposition => 'attachment')
   end
 
   def forgot_passwd
@@ -76,7 +92,6 @@ class PicController < ApplicationController
       if @user = Login.find_by_userid(params[:userid]) != nil
         @user.password = params[:password]
         @user.save
-        #redirect_to action: "index"
       end
     end
     redirect_to action: "index"
@@ -149,7 +164,6 @@ redirect_to action: "index"
   
   def icon
     pic = Paint.find(params[:id])
- #   @pic.find(params[:id])
     send_data(Base64.decode64(pic.filedata), :disposition => 'inline')
   end
 

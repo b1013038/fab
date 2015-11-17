@@ -1,0 +1,4 @@
+json.array!(@img) do |img|
+  json.extract! img, :filedata
+  json.url img_url(img, format: :json)
+end

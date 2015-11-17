@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   root :to => 'pic#index'
 
-  get 'show/:userid/:id/:title' => 'pic#show'
+  get 'index' => 'pic#index'
+
+  get 'show/:userid/:title' => 'pic#show'
 
   get 'show/:userid/' => 'pic#img_show'
 
