@@ -22,16 +22,25 @@ class PicController < ApplicationController
   end
   
   def show
-    if pic = Paint.find(params[:id])
-      pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
+    #if pic = Paint.find(params[:id])
+    #  pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
+    #end
+    if params[:category]
+      @img = Paint.where(category: params[:category])
+    #else
+      #if self.logged_in?
+        @img = Paint.where(userid: self.current_user.userid) if params[:category];
+     # else
+     #   @img = Paint.where(category: 1)
+     # end
     end
     respond_to do |format|
-      if params[:id].nil?
-        format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
+     # if params[:id].nil?
+     #   format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
         format.json
-      else
-        format.png {redirect_to action: 'index', notice: "missing id!"}
-      end
+     # else
+     #   format.png {redirect_to action: 'index', notice: "missing id!"}
+     # end
     end
   end
   
@@ -67,19 +76,19 @@ class PicController < ApplicationController
     File.open("public/img/#{pic.title}.png", 'wb') { |f|
       f.write(file)
     }
-    file_path = URI.escape(params[:userid]) + '/' + URI.escape(pic.title) + '.png'
-    pic.filedata = "http://paint.fablabhakodate.org/img/" + file_path
+    #file_path = URI.escape(params[:userid]) + '/' + URI.escape(pic.title) + '.png'
+    pic.filedata = "http://paint.fablabhakodate.org/img/#{pic.title}.png"
     pic.category = params[:category]
     #    end
-    respond_to do |format|
-      if pic.save
-        format.html {redirect_to index_url, notice: '成功！'}
-        format.json {render json: pic}
-      else
-        format.html {redirect_to index_url, motice: '失敗'}
-        format.json {render json: pic.errors.full_messages, status: :unprocessable_entity }
-      end
-    end
+#    respond_to do |format|
+#      if pic.save
+#        format.html {redirect_to index_url, notice: '成功！'}
+#        format.json {render json: pic}
+#      else
+#        format.html {redirect_to index_url, motice: '失敗'}
+#        format.json {render json: pic.errors.full_messages, status: :unprocessable_entity }
+#      end
+#    end
   end
   
   def convert
@@ -166,13 +175,16 @@ class PicController < ApplicationController
   def logout_user
     usr = Login.where(kie: session[:session_id])
     usr.update_all(kie: "a")
+    request.env[ActiveRecord::SessionStore::Session.primary_key] = nil         
+    reset_session
+    request.session_options[:id] = SecureRandom.hex(16)
     #usr.kie = "a"
     #usr.save
     session[:session_id] = nil
     cookies.delete :_ryokutya_session
     #self.current_user = nil
     #redirect_to action: "index"
-    self.reset_and_create_session_for_active_record
+    #self.reset_and_create_session_for_active_record
     respond_to do |format|
       if cookies[:_ryokutya_session].nil?
         format.html {redirect_to index_url, notice: 'ログアウトしました！'}

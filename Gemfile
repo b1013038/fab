@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'bartt-ssl_requirement', '~>1.4.0', require: 'ssl_requirement'
+#gem 'bartt-ssl_requirement', '~>1.4.0', require: 'ssl_requirement'
 # gem 'bartt-ssl_requirement', :require => 'ssl_requirement'
 
 gem 'mysql2', '~> 0.3.20'

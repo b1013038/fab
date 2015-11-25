@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   get 'index' => 'pic#index'
 
-  get 'show/:userid/:title' => 'pic#show'
+  get 'imgshow/:category' => 'pic#show'
 
   get 'show' => 'pic#img_show'
 
