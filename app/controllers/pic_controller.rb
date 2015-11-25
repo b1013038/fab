@@ -29,14 +29,16 @@ class PicController < ApplicationController
       @img = Paint.where(category: params[:category])
     #else
       #if self.logged_in?
-        @img = Paint.where(userid: self.current_user.userid) if params[:category];
+        @img = Paint.where(userid: self.current_user.userid) if params[:category] == -1;
      # else
      #   @img = Paint.where(category: 1)
      # end
     end
+    #render :json
     respond_to do |format|
      # if params[:id].nil?
      #   format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
+     # format.htm
         format.json
      # else
      #   format.png {redirect_to action: 'index', notice: "missing id!"}
