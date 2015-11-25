@@ -51,31 +51,31 @@ class PicController < ApplicationController
   def download
    # @pic = Paint.new
     if @pic = Paint.find(params[:id])
-     # send_data("img/{pic.filedata}.png", :type => 'image/png', :disposition => 'inline')
+     # send_data("public/img/#{pic.title}.png", :type => 'image/png', :disposition => 'inline')
     end
   end
   
   def create
     #    if session[:userid] == cookies[:_ryokutya_session]
 #    if Login.find_by_kie(request.session_options[:id])
-      @pic = Paint.new
-      @pic.userid = params[:userid]
-      @pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
+      pic = Paint.new
+      pic.userid = params[:userid]
+      pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
       file = Base64.decode64(params[:filedata])
-      File.open("public/img/#{@pic.title}.png", 'wb') { |f|
+      File.open("public/img/#{pic.title}.png", 'wb') { |f|
         f.write(file)
       }
-      file_path = URI.escape(params[:userid]) + '/' + URI.escape(@pic.title) + '.png'
-      @pic.filedata = "http://paint.fablabhakodate.org/show/" + file_path
-      @pic.category = params[:category]
+      file_path = URI.escape(params[:userid]) + '/' + URI.escape(pic.title) + '.png'
+      pic.filedata = "http://paint.fablabhakodate.org/img/" + file_path
+      pic.category = params[:category]
 #    end
     respond_to do |format|
-      if @pic.save
+      if pic.save
         format.html {redirect_to index_url, notice: '成功！'}
-        format.json {render json: @pic}
+        format.json {render json: pic}
       else
         format.html {redirect_to index_url, motice: '失敗'}
-        format.json {render json: @pic.errors.full_messages, status: :unprocessable_entity }
+        format.json {render json: pic.errors.full_messages, status: :unprocessable_entity }
       end
     end
   end
@@ -135,9 +135,9 @@ class PicController < ApplicationController
       if user = Login.authenticate(params[:userid], params[:password])
 #        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
         if same_kie = Login.where(kie: request.session_options[:id])
-          same_kie.update_all(kie: nil)
+          same_kie.update_all(kie: "a")
         end
-        Login.update(user.id, :kie => request.session_options[:id])
+        Login.update(user.id, kie: request.session_options[:id])
 #        session[:session_id] = cookies[:_ryokutya_session]
         session[:session_id] = request.session_options[:id]
         self.current_user = user
@@ -158,6 +158,10 @@ class PicController < ApplicationController
   def logout_user
     session[:session_id] = nil
     cookies.delete :_ryokutya_session
+    usr = Login.find_by_kie(request.session_options[:id])
+    usr.kie = "a"
+    usr.save
+    #self.current_user = nil
     #redirect_to action: "index"
     respond_to do |format|
       if cookies[:_ryokutya_session].nil?
@@ -171,15 +175,21 @@ class PicController < ApplicationController
   end
   
   def add_user
-    if Login.find_by_userid(params[:userid]).nil? && params[:userid] && params[:password]
       session[:session_id] = request.session_options[:id]
-      @user = Login.new
-      @user.userid = params[:userid]
-      @user.password = params[:password]
-      @user.kie = session[:session_id]
-#      @user.kie = cookies[:session_id]
-      @user.save
-      redirect_to action: "index"
+      user = Login.new
+      user.userid = params[:userid]
+      user.password = params[:password]
+      user.kie = request.session_options[:id]
+      #user.save
+      self.current_user = user
+    respond_to do |format|
+      if user.save
+        format.html {redirect_to index_url, notice: "add ok"}
+        format.json {render json: "success"}
+      else
+        format.html {redirect_to index_url, notice: "add no"}
+        format.json {render json: "error!!!!!!"}
+      end
     end 
   end
   

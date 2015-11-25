@@ -8,8 +8,10 @@ class Login < ActiveRecord::Base
 #  attr_accessible :userid, :password, :password_confirmation
   attr_accessor :password
   before_save :encrypt_password
+  validates :userid, :kie, presence: true
+  validates :userid, length: { in: 4..10, message: "userid"}
+  #validates :password, length: { in: 4..10, message: "password"}
 
-#  validates :userid, :password_salt, :password_hash, :kie, presence: true
   validates_confirmation_of :password
 
   def encrypt_password
