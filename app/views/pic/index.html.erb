@@ -3,7 +3,6 @@
     <% provide(:title, "メインページ") %>
   </head>
   <body>
-    <%= render 'pic/header' %><br>
     <% flash.each do |key, value| %>
     <%= content_tag(:div, value, class: "#{key}") %>
     <% end %>
@@ -14,9 +13,10 @@
 <% else %>
 ない
 <% end %>
+<%= @id %>
 <br>
+<%= link_to 'contents', action: 'img_show' %><br>
 <% if logged_in? %>
-<%= link_to 'contents', :action => 'img_show', :userid => current_user.userid %><br>
 <%= link_to 'logout', :action => 'logout_user' %><br>
 contentsに飛ぶとデータベースからuseridが<%= current_user.userid %>に引っかかったものを全部表示するよ。<br>
 その際に正しく保存できてない画像は壊れて表示されるよ。そのうち直すよ<br>

@@ -6,13 +6,13 @@ class Login < ActiveRecord::Base
     :password => "160504"
   )
 #  attr_accessible :userid, :password, :password_confirmation
-  attr_accessor :password
+  attr_accessor :password, :password_confirmation
   before_save :encrypt_password
-  validates :userid, :kie, presence: true
-  validates :userid, length: { in: 4..10, message: "userid"}
-  #validates :password, length: { in: 4..10, message: "password"}
+  #validates :userid, presence: true
+  validates :userid, length: { in: 4..10 }
+#  validates :password, length: { in: 4..10 }
 
-  validates_confirmation_of :password
+  validates_confirmation_of :password, :password_confirmation
 
   def encrypt_password
     if password.present?

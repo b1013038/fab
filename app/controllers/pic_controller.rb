@@ -3,15 +3,14 @@
 class PicController < ApplicationController
   helper_method :current_user, :logged_in?
   protect_from_forgery except: :pic_action
-  #ssl_required :login_user, :add_user
-  #ssl_allowed :index, :show, :img_show
-
+  
   def index
     @pic = Paint.new
     @img = Paint.last(10)
     @test = request.session_options[:id]
+    @id = session[:session_id]
   end
-
+  
   def to_blob
     pic = nil
     if pic = Paint.find(params[:id])
@@ -21,10 +20,10 @@ class PicController < ApplicationController
       format.any {render json: blob.to_json}
     end
   end
-
+  
   def show
-     if pic = Paint.find(params[:id])
-       pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
+    if pic = Paint.find(params[:id])
+      pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
     end
     respond_to do |format|
       if params[:id].nil?
@@ -40,35 +39,38 @@ class PicController < ApplicationController
     if params[:category]
       @img = Paint.where(category: params[:category])
     else
-      @img = Paint.where(userid: params[:userid])
+      if self.logged_in?
+        @img = Paint.where(userid: self.current_user.userid)
+      else
+        @img = Paint.where(category: 1)
+      end
     end
     respond_to do |format|
       format.html
       format.json
     end
   end
-
+  
   def download
-   # @pic = Paint.new
+    # @pic = Paint.new
     if @pic = Paint.find(params[:id])
-     # send_data("public/img/#{pic.title}.png", :type => 'image/png', :disposition => 'inline')
+      # send_data("public/img/#{pic.title}.png", :type => 'image/png', :disposition => 'inline')
     end
   end
   
   def create
-    #    if session[:userid] == cookies[:_ryokutya_session]
-#    if Login.find_by_kie(request.session_options[:id])
-      pic = Paint.new
-      pic.userid = params[:userid]
-      pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
-      file = Base64.decode64(params[:filedata])
-      File.open("public/img/#{pic.title}.png", 'wb') { |f|
-        f.write(file)
-      }
-      file_path = URI.escape(params[:userid]) + '/' + URI.escape(pic.title) + '.png'
-      pic.filedata = "http://paint.fablabhakodate.org/img/" + file_path
-      pic.category = params[:category]
-#    end
+    #    if Login.find_by_kie(request.session_options[:id])
+    pic = Paint.new
+    pic.userid = params[:userid]
+    pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
+    file = Base64.decode64(params[:filedata])
+    File.open("public/img/#{pic.title}.png", 'wb') { |f|
+      f.write(file)
+    }
+    file_path = URI.escape(params[:userid]) + '/' + URI.escape(pic.title) + '.png'
+    pic.filedata = "http://paint.fablabhakodate.org/img/" + file_path
+    pic.category = params[:category]
+    #    end
     respond_to do |format|
       if pic.save
         format.html {redirect_to index_url, notice: '成功！'}
@@ -100,7 +102,7 @@ class PicController < ApplicationController
     _pdf = _svg.to_blob
     send_data(_pdf, :type => "message/pdf", :filename => "convert#{params[:title]}.pdf", :disposition => 'attachment')
   end
-
+  
   def forgot_passwd
     #params[:question]
     gogo_tea = nil
@@ -116,7 +118,7 @@ class PicController < ApplicationController
   
   def current_user
     if session[:session_id]
-#      @current_user ||= Login.find_by_kie(cookies[:_ryokutya_session])
+      #      @current_user ||= Login.find_by_kie(cookies[:_ryokutya_session])
       @current_user ||= Login.find_by_kie(request.session_options[:id])
     end
   end
@@ -124,26 +126,32 @@ class PicController < ApplicationController
   def current_user=(user)
     @current_user = user
   end
-
+  
   def logged_in?
     current_user != nil
   end
-
+  
   def login_user
+    #if request.session_options[:id].nil?
+    #  self.create_session_for_active_record
+    #end
+    #self.create_session_for_active_record
     user = Login.new
+    #self.reset_and_create_session_for_active_record
     if params[:userid] && params[:password]
+      # self.reset_and_create_session_for_active_record
       if user = Login.authenticate(params[:userid], params[:password])
-#        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
+        #        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
         if same_kie = Login.where(kie: request.session_options[:id])
           same_kie.update_all(kie: "a")
         end
         Login.update(user.id, kie: request.session_options[:id])
-#        session[:session_id] = cookies[:_ryokutya_session]
+        #        session[:session_id] = cookies[:_ryokutya_session]
         session[:session_id] = request.session_options[:id]
         self.current_user = user
       end
     end
-#    redirect_to action: "index"
+    #    redirect_to action: "index"
     respond_to do |format|
       if self.logged_in?
         format.html {redirect_to index_url, notice: 'ログイン成功！'}
@@ -156,13 +164,15 @@ class PicController < ApplicationController
   end
   
   def logout_user
+    usr = Login.where(kie: session[:session_id])
+    usr.update_all(kie: "a")
+    #usr.kie = "a"
+    #usr.save
     session[:session_id] = nil
     cookies.delete :_ryokutya_session
-    usr = Login.find_by_kie(request.session_options[:id])
-    usr.kie = "a"
-    usr.save
     #self.current_user = nil
     #redirect_to action: "index"
+    self.reset_and_create_session_for_active_record
     respond_to do |format|
       if cookies[:_ryokutya_session].nil?
         format.html {redirect_to index_url, notice: 'ログアウトしました！'}
@@ -175,13 +185,17 @@ class PicController < ApplicationController
   end
   
   def add_user
-      session[:session_id] = request.session_options[:id]
-      user = Login.new
-      user.userid = params[:userid]
+    session[:session_id] = request.session_options[:id]
+    user = Login.new
+    user.userid = params[:userid]
+    if params[:password].length > 3 && params[:password].length < 11
       user.password = params[:password]
-      user.kie = request.session_options[:id]
-      #user.save
-      self.current_user = user
+    end
+    user.password_confirmation = params[:password_confirmation]
+    #      user.kie = request.session_options[:id]
+    user.kie = session[:session_id]
+    user.save
+    self.current_user = user
     respond_to do |format|
       if user.save
         format.html {redirect_to index_url, notice: "add ok"}
@@ -193,11 +207,26 @@ class PicController < ApplicationController
     end 
   end
   
+ # def reset_and_create_session_for_active_record
+    #request.env[ActiveRecord::SessionStore::Session.primary_key] = nil
+    #request.env[ActiveRecord::SessionStore::SESSION_RECORD_KEY] = nil
+    #reset_session
+    #request.session_options[:id] = SecureRandom.hex(16)
+ # end
+  
+ # def create_session_for_active_record
+    #  request.env[ActiveRecord::SessionStore::SESSION_RECORD_KEY] = nil
+    #request.env[ActiveRecord::SessionStore::SESSION_RECORD_KEY] = nil
+    #reset_session
+    #ActiveRecord::SessionStore::Session.primary_key
+    #request.session_options[:id] = SecureRandom.hex(16)
+ # end
+  
   def icon
     pic = Paint.find(params[:id])
     send_data(Base64.decode64(pic.filedata), disposition: 'inline')
   end
-
+  
   def error_msg=(msg)
     respond_to do |format|
       format.html {redirect_to index_url}
@@ -208,11 +237,11 @@ class PicController < ApplicationController
       end
     end
   end
-
+  
   def nothing
-
+    
   end
-
+  
   private
   def user_params
     params.require(:paint).permit(:title, :userid, :filedata, :category)

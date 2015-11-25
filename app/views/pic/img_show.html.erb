@@ -1,9 +1,9 @@
 <% provide(:title, "コンテンツページ") %>
-<% if logged_in? && current_user.userid == params[:userid] %>
-Welcome, <%= current_user.userid %>'s contents page<br>
 <br>
-カテゴリー選択
+カテゴリー選択<br>
+<% if logged_in? %>
 <%= link_to "自分の作品", action: "img_show" %>
+<% end %>
 <%= link_to "獣", action: "img_show", category: "1" %>
 <%= link_to "動物", action: "img_show", category: "2" %>
 <%= link_to "生き物", action: "img_show", category: "3" %>
@@ -11,11 +11,13 @@ Welcome, <%= current_user.userid %>'s contents page<br>
 <%= link_to "アニマル", action: "img_show", category: "5" %>
 <%= link_to "生類", action: "img_show", category: "6" %>
 <br>
-
+<% if logged_in? %>
   <% @img.each do |img| %>
    <%= link_to (image_tag "/img/#{img.title}.png"),:action => "download", id: img.id, title: img.title %><br>
-  <% end %>
-<% else %>
-  Only <%= params[:userid]  %> available.
+   <% end %>
+  <% else %>
+  <% @img.each do |img| %>
+  <%= link_to (image_tag "/img/#{img.title}.png"),:action => "download", id: img.id %><br>
 <% end %>
-<%= link_to "home", :action => "index" %>
+  <% end %>
+  <%= link_to "home", :action => "index" %>

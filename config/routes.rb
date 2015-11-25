@@ -5,7 +5,7 @@ Rails.application.routes.draw do
 
   get 'show/:userid/:title' => 'pic#show'
 
-  get 'show/:userid/' => 'pic#img_show'
+  get 'show' => 'pic#img_show'
 
   get 'login' => 'pic#login'
 
