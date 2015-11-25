@@ -1,30 +1,39 @@
-<h1>Pic#index</h1>
-<p>Find me in app/views/pic/index.html.erb</p>
-注意書き<br>
-cookieで簡単なセッション管理してるからcookieを消すとログイン解除されるよ<br>
-cookieにセッション内容は保存されないから安心してほしい<br>
-cookie削除してそのまま何かしらのaction呼び出したらエラー（InvalidAuthenticityToken）吐くよ<br>
-Base64に"data:image/png;base64,"　が入ってると正しく保存できないよ<br>
-平文で通信してるから通信内容がだだ漏れだけれど許してほしい<br>
-基本的にUTF-8だから日本語入力はできるよ そのうちできなくするよ<br>
-ルーティングがしっちゃかめっちゃかなのはゆるしてほしい<br>
-デザインがしっちゃかめっちゃかなのもゆるしてほしい<br>
-<%= image_tag(asset_path("asdfgh_adaa_1511235430.png")) %><br>
+<html>
+  <head>
+    <% provide(:title, "メインページ") %>
+  </head>
+  <body>
+    <%= render 'pic/header' %><br>
+    <% flash.each do |key, value| %>
+    <%= content_tag(:div, value, class: "#{key}") %>
+    <% end %>
+    
+    セッションID
+<% if @test %>
+ "<%= @test %>"
+<% else %>
+ない
+<% end %>
 <br>
 <% if logged_in? %>
-
-Welcome, <%= current_user.userid %><br>
-<%= link_to 'my contents', :action => 'img_show', :userid => current_user.userid %><br>
+<%= link_to 'contents', :action => 'img_show', :userid => current_user.userid %><br>
 <%= link_to 'logout', :action => 'logout_user' %><br>
-mycontentsに飛ぶとデータベースからuseridが<%= current_user.userid %>に引っかかったものを全部表示するよ。<br>
+contentsに飛ぶとデータベースからuseridが<%= current_user.userid %>に引っかかったものを全部表示するよ。<br>
 その際に正しく保存できてない画像は壊れて表示されるよ。そのうち直すよ<br>
 logoutはcookieとsessionを削除するよ。
 <% else %>
 <%= link_to "サインイン", action: "login" %><br>
 <%= link_to "新規登録", action: "register" %><br>
-<%= link_to "パスワード忘れた", action: "forgot" %><br>
+<%= link_to "パスワード忘れた(未実装)", action: "forgot" %><br>
 <% end %>
 <br>
+<br>
+新着順 最新10件<br>
+<% @img.each do |img| %>
+<%= link_to (image_tag "/img/#{img.title}.png"), :action => "download", id: img.id %>
+<% end %>
+<br>
+
 
 POSTテスト用<br>
 <%= form_tag(:action => :create) do %>
@@ -34,3 +43,30 @@ POSTテスト用<br>
 Base64化したPNG画像<%= text_area_tag :filedata %><br>
 <%= submit_tag "images" %><br>
 <% end %>
+<br>
+
+注意書き<br>
+ちょっと仕様変更<br>
+ヘッダー部分を部分テンプレートに変更<br>
+クッキーを捨てるまでセッションは持続<br>
+クッキーにセッション内容は保持されない<br>
+クッキーを配布するより前にコントローラが動くため直接postするとセッションエラーでうまく働かないことあり<br>
+なんとかしてcookieを取得する設定にすること<br>
+確認用に自身のセッションIDを表示<br>
+ルーティングはまだ未定<br>
+AuthenticityTokenはhtmlに組み込まれているけど特に意味は無い はず<br>
+エラー送信の内容を決めること<br>
+safari9.0.1, chrome46.0.2490.86 (64-bit),firefox41.0.1で正常に表示確認IEは多分無理<br>
+<br>
+cookieで簡単なセッション管理してるからcookieを消すとログイン解除されるよ<br>
+cookieにセッション内容は保存されないから安心してほしい<br>
+cookie削除してそのまま何かしらのaction呼び出したらエラー（InvalidAuthenticityTo
+ken）吐くよ 吐かないよ<br>
+Base64に"data:image/png;base64,"　が入ってると正しく保存できないよ<br>
+平文で通信してるから通信内容がだだ漏れだけれど許してほしい<br>
+基本的にUTF-8だから日本語入力はできるよ そのうちできなくするよ<br>
+デザインがしっちゃかめっちゃかなのもゆるしてほしい<br>
+<br>
+<%= render 'pic/footer' %>
+  </body>
+</html>

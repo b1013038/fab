@@ -13,13 +13,19 @@ Rails.application.routes.draw do
 
   get 'forgotpassword' => 'pic#forgot'
 
+  get 'blob/:id' => 'pic#to_blob'
+
+  get 'noooo' => 'pic#nothing'
+
 #  get 'download' => 'pic#download'
 
-  get 'convert' => 'pic#convert'
+#  get 'convert' => 'pic#convert'
+
+  post 'convert' => 'pic#convert'
 
 #  get ':userid/download/:id' => 'pic#download'
 
-  get 'download/:userid/:id' => 'pic#download'
+  get 'download' => 'pic#download'
 
   get 'logoutuser' => 'pic#logout_user'
 

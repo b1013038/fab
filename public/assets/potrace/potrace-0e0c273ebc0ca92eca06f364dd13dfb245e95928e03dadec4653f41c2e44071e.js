@@ -14,6 +14,7 @@ http://potrace.sourceforge.net/
 Lisence GPL2
 http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
 */
+
 Potrace = (function(){
 	"use strict";
 	//string literal

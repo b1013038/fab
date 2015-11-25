@@ -1,11 +1,19 @@
+<% provide(:title, "ダウンロード") %>
 <HTML>
   <HEAD>
-    <TITLE>test download</TITLE>
   </HEAD>
   <BODY>    
     <%= image_tag("/img/#{params[:title]}.png") %><br>
-    <%= link_to "download pdf", :action=> "convert", id: @pic.id %><br>
-    <%= link_to "contents page", :action=> "img_show", userid: params[:userid] %>
+    <%= form_tag action: "convert" do %>
+    <%= select_tag :size, options_for_select([["えびみりん(100x100)", "100x100"],["ハーベスト(90x90)","90x90"],["tesuto(300x300)","300x300"]]) %>
+<%= hidden_field_tag :id, @pic.id %>
+<%= hidden_field_tag :title, @pic.title %>
+<%= submit_tag "download!" %>
+<% end %>
+    <% if logged_in? %>
+    <%= link_to "contents page", :action=> "img_show", userid: params[:userid] %><br>
+    <% end %>
+    <%= link_to "home", :action=> "index" %>
   </BODY>
   
 </HTML>

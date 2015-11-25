@@ -1,35 +1,42 @@
 # coding: utf-8
 
 class PicController < ApplicationController
-  #force_ssl
   helper_method :current_user, :logged_in?
+  protect_from_forgery except: :pic_action
+  #ssl_required :login_user, :add_user
+  #ssl_allowed :index, :show, :img_show
 
   def index
-    #redirect_to :action => 'auth_user?'
     @pic = Paint.new
+    @img = Paint.last(10)
+    @test = request.session_options[:id]
+  end
+
+  def to_blob
+    pic = nil
+    if pic = Paint.find(params[:id])
+      blob = {filedata: Base64.encode64(File.open("public/img/#{pic.title}.png").read).chomp}
+    end
+    respond_to do |format|
+      format.any {render json: blob.to_json}
+    end
   end
 
   def show
-    
- #   @pic = Paint.new
-    #    @pic = Paint.where(["title = ? and userid = ?", URI.unescape(params[:title]), URI.unescape(params[:userid])])
-#    @pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
-   # pic = @pic.take
-    if params[:id]
-      pic = Paint.find(params[:id])
-    else
-      pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
-    @blob = Base64.encode64(File.open("public/img/#{pic.title}.png").read)
+     if pic = Paint.find(params[:id])
+       pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
     end
     respond_to do |format|
-      format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
-      format.json
+      if params[:id].nil?
+        format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
+        format.json
+      else
+        format.png {redirect_to action: 'index', notice: "missing id!"}
+      end
     end
   end
   
   def img_show
-   # @img = Paint.where(userid: params[:userid])
-    #send_file("public/img/{img.title}.png", :disposition => 'inline')
     if params[:category]
       @img = Paint.where(category: params[:category])
     else
@@ -49,26 +56,36 @@ class PicController < ApplicationController
   end
   
   def create
-    #params[:paint][:aaa]
-    @pic = Paint.new
-    @pic.userid = params[:userid]
-    @pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
-    file = Base64.decode64(params[:filedata])
-    File.open("public/img/#{@pic.title}.png", 'wb') { |f|
-      f.write(file)
-    }
-    file_path = URI.escape(params[:userid]) + '/' + URI.escape(@pic.title) + '.png'
-    @pic.filedata = "http://paint.fablabhakodate.org/show/" + file_path
-    @pic.category = params[:category]
-    @pic.save
-    redirect_to action: "index"
+    #    if session[:userid] == cookies[:_ryokutya_session]
+#    if Login.find_by_kie(request.session_options[:id])
+      @pic = Paint.new
+      @pic.userid = params[:userid]
+      @pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
+      file = Base64.decode64(params[:filedata])
+      File.open("public/img/#{@pic.title}.png", 'wb') { |f|
+        f.write(file)
+      }
+      file_path = URI.escape(params[:userid]) + '/' + URI.escape(@pic.title) + '.png'
+      @pic.filedata = "http://paint.fablabhakodate.org/show/" + file_path
+      @pic.category = params[:category]
+#    end
+    respond_to do |format|
+      if @pic.save
+        format.html {redirect_to index_url, notice: '成功！'}
+        format.json {render json: @pic}
+      else
+        format.html {redirect_to index_url, motice: '失敗'}
+        format.json {render json: @pic.errors.full_messages, status: :unprocessable_entity }
+      end
+    end
   end
   
   def convert
-   # @pic = Paint.new
-   # @pic = Paint.find(params[:id])
     _filepath = "public/img/#{params[:title]}.png"
     image = Magick::Image.read(_filepath)[0]
+    #image = image.resize(params[:width], params[:height])
+    scale = params[:size].split("x")
+    image = image.resize(scale[0].to_i,scale[1].to_i) 
     image.format = "svg"
     _png = image.to_blob.to_s
     _png = _png.split(" cy=\""+(image.rows - 1).to_s , 2)
@@ -81,7 +98,7 @@ class PicController < ApplicationController
     _svg = Magick::Image.from_blob(_str)[0]
     _svg.format = "pdf"
     _pdf = _svg.to_blob
-    send_data(_pdf, :type => "message/pdf", :filename => "convert#{params_[:title]}.pdf", :disposition => 'attachment')
+    send_data(_pdf, :type => "message/pdf", :filename => "convert#{params[:title]}.pdf", :disposition => 'attachment')
   end
 
   def forgot_passwd
@@ -96,22 +113,11 @@ class PicController < ApplicationController
     end
     redirect_to action: "index"
   end
-
-  def auth_user
-    if cookies[:_ryokutya_session].present?
-      if session[:session_id] == cookies[:_ryokutya_session]
-        if user = Login.find(kie: session[:session_id])
-       #   self.current_user = user
-        else
-       #   self.current_user = nil
-        end
-      end
-    end
-  end
   
   def current_user
     if session[:session_id]
-      @current_user ||= Login.find_by_kie(cookies[:_ryokutya_session])
+#      @current_user ||= Login.find_by_kie(cookies[:_ryokutya_session])
+      @current_user ||= Login.find_by_kie(request.session_options[:id])
     end
   end
   
@@ -125,46 +131,76 @@ class PicController < ApplicationController
 
   def login_user
     user = Login.new
-    #cookies.delete :_ryokutya_session
-    #session[:session_id] = cookies[:_ryokutya_session]
-    if params[:userid] !=nil && params[:password] != nil
+    if params[:userid] && params[:password]
       if user = Login.authenticate(params[:userid], params[:password])
-        #if cookies[:_ryokutya_session] != user.kie
-        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
-          #Login.update_all(['kie = ?', nil], ['kie = ?', cookies[:_ryokutya_session]])
+#        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
+        if same_kie = Login.where(kie: request.session_options[:id])
           same_kie.update_all(kie: nil)
         end
-        Login.update(user.id, :kie => cookies[:_ryokutya_session])
-        # @user.kie = session[:data]
-        # @user.save
-        session[:session_id] = cookies[:_ryokutya_session]
+        Login.update(user.id, :kie => request.session_options[:id])
+#        session[:session_id] = cookies[:_ryokutya_session]
+        session[:session_id] = request.session_options[:id]
         self.current_user = user
       end
     end
-    redirect_to action: "index"
+#    redirect_to action: "index"
+    respond_to do |format|
+      if self.logged_in?
+        format.html {redirect_to index_url, notice: 'ログイン成功！'}
+        format.json {render json: "success"}
+      else
+        format.html {redirect_to index_url, notice: 'ログイン失敗！'}
+        format.json {render json: "error!!!!!!"}
+      end
+    end
   end
   
   def logout_user
     session[:session_id] = nil
     cookies.delete :_ryokutya_session
-    redirect_to action: "index"
+    #redirect_to action: "index"
+    respond_to do |format|
+      if cookies[:_ryokutya_session].nil?
+        format.html {redirect_to index_url, notice: 'ログアウトしました！'}
+        format.json {render json: "success"}
+      else
+        format.html {redirect_to index_url, notice: 'ログアウトできてない'}
+        format.json {render json: "error!!!!!!"}
+      end
+    end
   end
-
+  
   def add_user
-    if Login.find_by_userid(params[:userid]) == nil && params[:userid] != nil && params[:password] != nil
-      session[:session_id] = cookies[:_ryokutya_session]
+    if Login.find_by_userid(params[:userid]).nil? && params[:userid] && params[:password]
+      session[:session_id] = request.session_options[:id]
       @user = Login.new
       @user.userid = params[:userid]
       @user.password = params[:password]
       @user.kie = session[:session_id]
+#      @user.kie = cookies[:session_id]
       @user.save
-redirect_to action: "index"
+      redirect_to action: "index"
     end 
   end
   
   def icon
     pic = Paint.find(params[:id])
-    send_data(Base64.decode64(pic.filedata), :disposition => 'inline')
+    send_data(Base64.decode64(pic.filedata), disposition: 'inline')
+  end
+
+  def error_msg=(msg)
+    respond_to do |format|
+      format.html {redirect_to index_url}
+      if msg
+        format.json {render json: msg}
+      else
+        format.json {render json: "error!!!!!!"}
+      end
+    end
+  end
+
+  def nothing
+
   end
 
   private
