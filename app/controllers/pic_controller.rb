@@ -80,6 +80,10 @@ class PicController < ApplicationController
     pic.filedata = "http://paint.fablabhakodate.org/img/#{pic.title}.png"
     pic.category = params[:category]
     #    end
+    pic.save
+    unless pic.save
+      @pic_error_message = [pic.errors.full_messages].compact
+    end
 #    respond_to do |format|
 #      if pic.save
 #        format.html {redirect_to index_url, notice: '成功！'}

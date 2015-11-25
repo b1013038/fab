@@ -3,6 +3,7 @@
     <% provide(:title, "メインページ") %>
   </head>
   <body>
+    <%= render 'pic/header' %>
     <% flash.each do |key, value| %>
     <%= content_tag(:div, value, class: "#{key}") %>
     <% end %>
@@ -30,7 +31,7 @@ logoutはcookieとsessionを削除するよ。
 <br>
 新着順 最新10件<br>
 <% @img.each do |img| %>
-<%= link_to (image_tag "/img/#{img.title}.png"), :action => "download", id: img.id %>
+<%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
 <% end %>
 <br>
 
