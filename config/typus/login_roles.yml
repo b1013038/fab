@@ -1,7 +1,7 @@
 # Use the README file as a reference to customize settings.
 
 admin:
-  Login: create, read, delete
+  Login: read, delete
 
 editor:
   AdminUser: read

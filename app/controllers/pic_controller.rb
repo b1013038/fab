@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 # coding: utf-8
 
 class PicController < ApplicationController
   helper_method :current_user, :logged_in?
   protect_from_forgery except: :pic_action
   
-  
+ 
   def index
     @pic = Paint.new
     @img = Paint.last(10)
@@ -39,7 +40,7 @@ class PicController < ApplicationController
      # end
     end
     render "show", formats: [:json], handlers: [:jbuilder]
-   # render :json
+  # render :json
     #respond_to do |format|
      # if params[:id].nil?
      #   format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
@@ -152,14 +153,27 @@ class PicController < ApplicationController
     current_user != nil
   end
   
+  def signin_user
+    session[:session_id] = SecureRandom.hex(16)
+    request.session_options[:id] = session[:session_id]
+    cookies[:_ryokutya_session] = session[:session_id]
+
+    if user = Login.authenticate(params[:userid], params[:password])
+      if same_kie = Login.where(kie: session[:session_id])
+            same_kie.update_all(kie: "a")
+      end
+      Login.update(user.id, kie: session[:session_id])
+      self.current_user = user
+    end
+
+    if self.current_user.nil?
+      render json: "login_error"
+    end
+  end
+
   def login_user
-    #if request.session_options[:id].nil?
-    #  self.create_session_for_active_record
-    #end
-    #self.create_session_for_active_record
     user = Login.new
-    #self.reset_and_create_session_for_active_record
-    if params[:userid] && params[:password]
+    #if params[:userid] && params[:password]
 #      if params[:userid].ascii_only? && params[:password].ascii_only?
         # self.reset_and_create_session_for_active_record
         if user = Login.authenticate(params[:userid], params[:password])
@@ -168,20 +182,21 @@ class PicController < ApplicationController
             same_kie.update_all(kie: "a")
           end
           Login.update(user.id, kie: request.session_options[:id])
+          #user.kie = request.session_options[:id]
+          #user.save
           #        session[:session_id] = cookies[:_ryokutya_session]
+          #session[:session_id] = cookies[:_ryokutya_session]
           session[:session_id] = request.session_options[:id]
           self.current_user = user
         end
 #      end
-    end
+    #end
     #    redirect_to action: "index"
     respond_to do |format|
       if self.logged_in?
         format.html {redirect_to index_url, notice: 'ログイン成功！'}
-        format.json {render json: "success"}
       else
         format.html {redirect_to index_url, notice: 'ログイン失敗！'}
-        format.json {render json: "error!!!!!!"}
       end
     end
   end
@@ -250,7 +265,21 @@ class PicController < ApplicationController
   end
   
   def nothing
-    
+    #render json: "a"
+    #request.env[ActiveRecord::SessionStore::Session.primary_key] = nil
+    #reset_session
+    #session[:session_id] = SecureRandom.hex(16)
+    $kie = SecureRandom.hex(16)
+session[:session_id] = $kie
+    #request.session_options[:id] = $kie
+    #request.session_options[:id] = SecureRandom.hex(16)
+    cookies[:_ryokutya_session] = $kie
+    #session[:session_id] = request.session_options[:id]
+    # request.session_options[:id]
+    respond_to do |format|
+      #format.html
+      format.json {render json: "a"}
+    end
   end
   
   private
