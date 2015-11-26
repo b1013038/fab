@@ -4,6 +4,7 @@ class PicController < ApplicationController
   helper_method :current_user, :logged_in?
   protect_from_forgery except: :pic_action
   
+  
   def index
     @pic = Paint.new
     @img = Paint.last(10)
@@ -159,17 +160,19 @@ class PicController < ApplicationController
     user = Login.new
     #self.reset_and_create_session_for_active_record
     if params[:userid] && params[:password]
-      # self.reset_and_create_session_for_active_record
-      if user = Login.authenticate(params[:userid], params[:password])
-        #        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
-        if same_kie = Login.where(kie: request.session_options[:id])
-          same_kie.update_all(kie: "a")
+#      if params[:userid].ascii_only? && params[:password].ascii_only?
+        # self.reset_and_create_session_for_active_record
+        if user = Login.authenticate(params[:userid], params[:password])
+          #        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
+          if same_kie = Login.where(kie: request.session_options[:id])
+            same_kie.update_all(kie: "a")
+          end
+          Login.update(user.id, kie: request.session_options[:id])
+          #        session[:session_id] = cookies[:_ryokutya_session]
+          session[:session_id] = request.session_options[:id]
+          self.current_user = user
         end
-        Login.update(user.id, kie: request.session_options[:id])
-        #        session[:session_id] = cookies[:_ryokutya_session]
-        session[:session_id] = request.session_options[:id]
-        self.current_user = user
-      end
+#      end
     end
     #    redirect_to action: "index"
     respond_to do |format|
@@ -210,9 +213,9 @@ class PicController < ApplicationController
   def add_user
     session[:session_id] = request.session_options[:id]
     user = Login.new
-    user.userid = params[:userid]
+    user.userid = params[:userid] if params[:userid].ascii_only?
     if params[:password].length > 3 && params[:password].length < 11
-      user.password = params[:password]
+      user.password = params[:password] if params[:password].ascii_only?
     end
     user.password_confirmation = params[:password_confirmation]
     #      user.kie = request.session_options[:id]
@@ -229,22 +232,7 @@ class PicController < ApplicationController
       end
     end 
   end
-  
- # def reset_and_create_session_for_active_record
-    #request.env[ActiveRecord::SessionStore::Session.primary_key] = nil
-    #request.env[ActiveRecord::SessionStore::SESSION_RECORD_KEY] = nil
-    #reset_session
-    #request.session_options[:id] = SecureRandom.hex(16)
- # end
-  
- # def create_session_for_active_record
-    #  request.env[ActiveRecord::SessionStore::SESSION_RECORD_KEY] = nil
-    #request.env[ActiveRecord::SessionStore::SESSION_RECORD_KEY] = nil
-    #reset_session
-    #ActiveRecord::SessionStore::Session.primary_key
-    #request.session_options[:id] = SecureRandom.hex(16)
- # end
-  
+    
   def icon
     pic = Paint.find(params[:id])
     send_data(Base64.decode64(pic.filedata), disposition: 'inline')

@@ -2,7 +2,8 @@ source 'https://rubygems.org'
 
 #gem 'bartt-ssl_requirement', '~>1.4.0', require: 'ssl_requirement'
 # gem 'bartt-ssl_requirement', :require => 'ssl_requirement'
-
+#gem "typus", github: "typus/typus"
+gem "typus", github: "typus/typus"
 gem 'mysql2', '~> 0.3.20'
 gem 'jquery-turbolinks'
 gem 'rmagick'

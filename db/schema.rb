@@ -11,23 +11,40 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151115152539) do
+ActiveRecord::Schema.define(version: 20151126175626) do
+
+  create_table "admin_users", force: :cascade do |t|
+    t.string   "first_name",      limit: 255, default: "",    null: false
+    t.string   "last_name",       limit: 255, default: "",    null: false
+    t.string   "role",            limit: 255,                 null: false
+    t.string   "email",           limit: 255,                 null: false
+    t.boolean  "status",                      default: false
+    t.string   "token",           limit: 255,                 null: false
+    t.string   "password_digest", limit: 255,                 null: false
+    t.string   "preferences",     limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
 
   create_table "logins", force: :cascade do |t|
     t.string   "userid",        limit: 255,   null: false
-    t.string   "password_hash", limit: 255
-    t.string   "password_salt", limit: 255
+    t.string   "password_hash", limit: 255,   null: false
+    t.string   "password_salt", limit: 255,   null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "kie",           limit: 65535
   end
 
+  add_index "logins", ["userid"], name: "index_logins_on_userid", unique: true, using: :btree
+
   create_table "paints", force: :cascade do |t|
     t.string   "userid",     limit: 255, null: false
     t.integer  "category",   limit: 4,   null: false
     t.string   "title",      limit: 255, null: false
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
     t.string   "filedata",   limit: 255
   end
 

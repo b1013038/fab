@@ -1,0 +1,4 @@
+class AddUseridIndexToLogins < ActiveRecord::Migration
+  def change
+  end
+end

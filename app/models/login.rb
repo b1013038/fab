@@ -9,15 +9,17 @@ class Login < ActiveRecord::Base
   attr_accessor :password, :password_confirmation
   before_save :encrypt_password
   #validates :userid, presence: true
-  validates :userid, length: { in: 4..10 }
+  validates :userid, length: { in: 4..10 }, uniqueness: true
 #  validates :password, length: { in: 4..10 }
 
   validates_confirmation_of :password, :password_confirmation
 
   def encrypt_password
     if password.present?
-      self.password_salt = BCrypt::Engine.generate_salt
-      self.password_hash = BCrypt::Engine.hash_secret(password, password_salt)
+      if userid.ascii_only? && password.ascii_only?
+        self.password_salt = BCrypt::Engine.generate_salt
+        self.password_hash = BCrypt::Engine.hash_secret(password, password_salt)
+      end
     end
   end
 

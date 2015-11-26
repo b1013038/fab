@@ -1,0 +1,4 @@
+class ChangeDatatimeNullPaints < ActiveRecord::Migration
+  def change
+  end
+end
