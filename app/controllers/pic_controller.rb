@@ -15,10 +15,13 @@ class PicController < ApplicationController
     pic = nil
     if pic = Paint.find(params[:id])
       blob = {filedata: Base64.encode64(File.open("public/img/#{pic.title}.png").read).chomp}
+    else
+      blob = "id can't be nil."
     end
-    respond_to do |format|
-      format.any {render json: blob.to_json}
-    end
+    render json: blob
+    #respond_to do |format|
+    #  format.any {render json: blob.to_json}
+    #end
   end
   
   def show
@@ -29,21 +32,22 @@ class PicController < ApplicationController
       @img = Paint.where(category: params[:category])
     #else
       #if self.logged_in?
-        @img = Paint.where(userid: self.current_user.userid) if params[:category] == -1;
+        @img = Paint.where(userid: self.current_user.userid) if params[:category] == "-1";
      # else
      #   @img = Paint.where(category: 1)
      # end
     end
-    #render :json
-    respond_to do |format|
+    render "show", formats: [:json], handlers: [:jbuilder]
+   # render :json
+    #respond_to do |format|
      # if params[:id].nil?
      #   format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
      # format.htm
-        format.json
+     #   format.json
      # else
      #   format.png {redirect_to action: 'index', notice: "missing id!"}
      # end
-    end
+   # end
   end
   
   def img_show
@@ -56,9 +60,10 @@ class PicController < ApplicationController
         @img = Paint.where(category: 1)
       end
     end
+    #render 'img_show', format: [:json], handlers: [:jbuilder]
     respond_to do |format|
       format.html
-      format.json
+     # format.json
     end
   end
   

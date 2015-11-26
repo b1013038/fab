@@ -3,6 +3,7 @@
   <HEAD>
   </HEAD>
   <BODY>    
+    <%= render 'pic/header' %>
     <%= image_tag("/img/#{@pic.title}.png") %><br>
     <%= form_tag action: "convert" do %>
     <%= select_tag :size, options_for_select([["えびみりん(100x100)", "100x100"],["ハーベスト(90x90)","90x90"],["tesuto(300x300)","300x300"]]) %>
@@ -14,6 +15,7 @@
     <%= link_to "contents page", :action=> "img_show", userid: params[:userid] %><br>
     <% end %>
     <%= link_to "home", :action=> "index" %>
+    <%= render 'pic/footer' %>
   </BODY>
   
 </HTML>

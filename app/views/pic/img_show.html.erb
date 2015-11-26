@@ -1,5 +1,5 @@
 <% provide(:title, "コンテンツページ") %>
-<br>
+<%= render 'pic/header' %>
 カテゴリー選択<br>
 <% if logged_in? %>
 <%= link_to "自分の作品", action: "img_show" %>
@@ -13,11 +13,12 @@
 <br>
 <% if logged_in? %>
   <% @img.each do |img| %>
-   <%= link_to (image_tag "/img/#{img.title}.png"),:action => "download", id: img.id, title: img.title %><br>
+   <%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id, title: img.title %><br>
    <% end %>
   <% else %>
   <% @img.each do |img| %>
-  <%= link_to (image_tag "/img/#{img.title}.png"),:action => "download", id: img.id %><br>
+  <%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %><br>
 <% end %>
   <% end %>
   <%= link_to "home", :action => "index" %>
+<%= render 'pic/footer' %>

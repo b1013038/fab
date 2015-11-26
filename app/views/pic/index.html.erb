@@ -17,16 +17,6 @@
 <%= @id %>
 <br>
 <%= link_to 'contents', action: 'img_show' %><br>
-<% if logged_in? %>
-<%= link_to 'logout', :action => 'logout_user' %><br>
-contentsに飛ぶとデータベースからuseridが<%= current_user.userid %>に引っかかったものを全部表示するよ。<br>
-その際に正しく保存できてない画像は壊れて表示されるよ。そのうち直すよ<br>
-logoutはcookieとsessionを削除するよ。
-<% else %>
-<%= link_to "サインイン", action: "login" %><br>
-<%= link_to "新規登録", action: "register" %><br>
-<%= link_to "パスワード忘れた(未実装)", action: "forgot" %><br>
-<% end %>
 <br>
 <br>
 新着順 最新10件<br>
@@ -54,7 +44,7 @@ Base64化したPNG画像<%= text_area_tag :filedata %><br>
 クッキーを配布するより前にコントローラが動くため直接postするとセッションエラーでうまく働かないことあり<br>
 なんとかしてcookieを取得する設定にすること<br>
 確認用に自身のセッションIDを表示<br>
-ルーティングはまだ未定<br>
+ルーティングに問題が無ければこれで決定<br>
 AuthenticityTokenはhtmlに組み込まれているけど特に意味は無い はず<br>
 エラー送信の内容を決めること<br>
 safari9.0.1, chrome46.0.2490.86 (64-bit),firefox41.0.1で正常に表示確認IEは多分無理<br>

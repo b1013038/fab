@@ -13,7 +13,7 @@ Rails.application.routes.draw do
 
   get 'forgotpassword' => 'pic#forgot'
 
-  get 'blob/:id' => 'pic#to_blob'
+  get 'blob' => 'pic#to_blob'
 
   get 'noooo' => 'pic#nothing'
 
