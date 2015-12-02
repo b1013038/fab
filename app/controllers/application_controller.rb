@@ -7,9 +7,18 @@ class ApplicationController < ActionController::Base
   skip_before_action :verify_authenticity_token
 
   def current_user
-    if session[:user_id]
-      @current_user ||= User.find(session[:user_id])
+    if session[:session_id]
+      @current_user ||= Login.find_by_kie(session[:session_id])
     end
   end
-  helper_method :current_user
+  
+  def current_user=(user)
+    @current_user = user
+  end
+  
+  def logged_in?
+    current_user != nil
+  end
+
+  helper_method :current_user, :logged_in?
 end

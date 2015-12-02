@@ -11,7 +11,7 @@
 <%= link_to "生類", action: "img_show", category: "6" %>
 <%= link_to "生類", action: "img_show", category: "7" %>
 <br>
-<% @img.each do |img| %>
+<% @img.reverse_each do |img| %>
   <%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %><br>
 <% end %>
   <%= link_to "home", :action => "index" %>

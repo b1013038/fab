@@ -2,7 +2,8 @@
 # coding: utf-8
 
 class PicController < ApplicationController
-  helper_method :current_user, :logged_in?
+#  helper_method :current_user, :logged_in?
+  helper_method :current_user, :logged_in? 
   protect_from_forgery except: :pic_action
   
  
@@ -11,6 +12,7 @@ class PicController < ApplicationController
     @img = Paint.last(10)
     @test = request.session_options[:id]
     @id = session[:session_id]
+
   end
   
   def to_blob
@@ -103,6 +105,21 @@ class PicController < ApplicationController
 #      end
 #    end
   end
+
+  def convert_potrace
+    _filepath = "public/img/#{params[:title]}.png"
+    image = Magick::Image.read(_filepath)[0]
+    scale = params[:size].split("x")
+    image = image.resize(scale[0].to_i,scale[1].to_i)
+    image.format = "bmp"
+    image.write("public/img/#{params[:title]}.bmp")
+    #File.open("public/img/#{params[:title]}.bmp", 'wb') { |f|
+    #  f.write()
+    #}
+    result = `potrace -s -o public/img/#{params[:title]}.bmp public/img/#{params[:title]}.svg`
+    #_svg = Magick::Image.read("public/img/#{pic.title}.svg")[0]
+    send_data("public/img/#{pic.title}.svg", :filename => "aaa_convert#{params[:title]}.svg", :disposition => 'attachment')
+  end
   
   def convert
     _filepath = "public/img/#{params[:title]}.png"
@@ -122,6 +139,7 @@ class PicController < ApplicationController
     _svg = Magick::Image.from_blob(_str)[0]
     _svg.format = "pdf"
     _pdf = _svg.to_blob
+    #send_data(_pdf, :filename => "convert#{params[:title]}.svg", :disposition => 'attachment')
     send_data(_pdf, :type => "message/pdf", :filename => "convert#{params[:title]}.pdf", :disposition => 'attachment')
   end
   
@@ -137,61 +155,32 @@ class PicController < ApplicationController
     end
     redirect_to action: "index"
   end
-  
-  def current_user
-    if session[:session_id]
-      #      @current_user ||= Login.find_by_kie(cookies[:_ryokutya_session])
-      @current_user ||= Login.find_by_kie(request.session_options[:id])
-    end
-  end
-  
-  def current_user=(user)
-    @current_user = user
-  end
-  
-  def logged_in?
-    current_user != nil
-  end
-  
+   
   def signin_user
-    session[:session_id] = SecureRandom.hex(16)
-    request.session_options[:id] = session[:session_id]
-    cookies[:_ryokutya_session] = session[:session_id]
-
     if user = Login.authenticate(params[:userid], params[:password])
-      if same_kie = Login.where(kie: session[:session_id])
-            same_kie.update_all(kie: "a")
+      if same_kie = Login.where(kie: request.env['HTTP_COOKIE'].split('=')[1])
+        same_kie.update_all(kie: "logout")
       end
-      Login.update(user.id, kie: session[:session_id])
+      Login.update(user.id, kie: request.env['HTTP_COOKIE'].split('=')[1])
+      session[:session_id] = request.env['HTTP_COOKIE'].split('=')[1]
       self.current_user = user
     end
-
+    
     if self.current_user.nil?
-      render json: "login_error"
+       render json: "error_code:login_error #{cookies[:_ryokutya_session]} , #{request.session_options[:id]} , #{session[:session_id]}"
     end
   end
 
   def login_user
     user = Login.new
-    #if params[:userid] && params[:password]
-#      if params[:userid].ascii_only? && params[:password].ascii_only?
-        # self.reset_and_create_session_for_active_record
-        if user = Login.authenticate(params[:userid], params[:password])
-          #        if same_kie = Login.where(kie: cookies[:_ryokutya_session])
-          if same_kie = Login.where(kie: request.session_options[:id])
-            same_kie.update_all(kie: "a")
-          end
-          Login.update(user.id, kie: request.session_options[:id])
-          #user.kie = request.session_options[:id]
-          #user.save
-          #        session[:session_id] = cookies[:_ryokutya_session]
-          #session[:session_id] = cookies[:_ryokutya_session]
-          session[:session_id] = request.session_options[:id]
-          self.current_user = user
-        end
-#      end
-    #end
-    #    redirect_to action: "index"
+    if user = Login.authenticate(params[:userid], params[:password])
+      if same_kie = Login.where(kie: request.session_options[:id])
+        same_kie.update_all(kie: "logout")
+      end
+      Login.update(user.id, kie: request.session_options[:id])
+      session[:session_id] = request.session_options[:id]
+     self.current_user = user
+    end
     respond_to do |format|
       if self.logged_in?
         format.html {redirect_to index_url, notice: 'ログイン成功！'}
@@ -203,7 +192,7 @@ class PicController < ApplicationController
   
   def logout_user
     usr = Login.where(kie: session[:session_id])
-    usr.update_all(kie: "a")
+    usr.update_all(kie: "logout")
     request.env[ActiveRecord::SessionStore::Session.primary_key] = nil         
     reset_session
     request.session_options[:id] = SecureRandom.hex(16)
@@ -216,10 +205,10 @@ class PicController < ApplicationController
     #self.reset_and_create_session_for_active_record
     respond_to do |format|
       if cookies[:_ryokutya_session].nil?
-        format.html {redirect_to index_url, notice: 'ログアウトしました！'}
+        format.html {redirect_to root_url, notice: 'ログアウトしました！'}
         format.json {render json: "success"}
       else
-        format.html {redirect_to index_url, notice: 'ログアウトできてない'}
+        format.html {redirect_to root_url, notice: 'ログアウトできてない'}
         format.json {render json: "error!!!!!!"}
       end
     end
@@ -247,11 +236,6 @@ class PicController < ApplicationController
       end
     end 
   end
-    
-  def icon
-    pic = Paint.find(params[:id])
-    send_data(Base64.decode64(pic.filedata), disposition: 'inline')
-  end
   
   def error_msg=(msg)
     respond_to do |format|
@@ -266,19 +250,20 @@ class PicController < ApplicationController
   
   def nothing
     #render json: "a"
-    #request.env[ActiveRecord::SessionStore::Session.primary_key] = nil
-    #reset_session
-    #session[:session_id] = SecureRandom.hex(16)
-    $kie = SecureRandom.hex(16)
-session[:session_id] = $kie
+#   request.env[ActiveRecord::SessionStore::Session.primary_key] = nil
+#    reset_session
+    session[:session_id] = SecureRandom.hex(16)
+    #request.session_options[:id] = SecureRandom.hex(16)
+    #session[:session_id] = request.session_options[:id]
     #request.session_options[:id] = $kie
     #request.session_options[:id] = SecureRandom.hex(16)
-    cookies[:_ryokutya_session] = $kie
+    #cookies[:_ryokutya_session] = request.session_options[:id]
     #session[:session_id] = request.session_options[:id]
     # request.session_options[:id]
+    cookies[:_ryokutya_session] = {value: session[:session_id], httponly: true, path: "/signinuser"}
     respond_to do |format|
       #format.html
-      format.json {render json: "a"}
+      format.json {render json: "asdfghjklkjhgfdsdfghjk"}
     end
   end
   

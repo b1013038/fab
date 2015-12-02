@@ -2,70 +2,75 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+@charset "utf-8";
+
+/* --- 全体の背景・テキスト --- */
 body {
 margin: 0;
 padding: 0;
-background-color: #ffffff;
-color: #000000;
-font-size: 100%;
+background-color: #ffffff; /* ページの背景色 */
+color: #000000; /* 全体の文字色 */
+font-size: 100%; /* 全体の文字サイズ */
 }
 
-a:link { color: #0000ff; }
+/* --- 全体のリンクテキスト --- */ 
+table.header a:link { color: #ffffff; }
+table.header a:hover { color: #cccccc;}
+a:link { color: #2e8b57; }
 a:visited { color: #800080; }
-a:hover { color: #ff0000; }
+a:hover { color: #5f9ea0; }
 a:active { color: #ff0000; }
 
+/* --- コンテナ --- */
 #container {
-width: 100%;
+width: 100%; /* ページの幅 */
 float: left;
-border-left: 1px #c0c0c0 solid;
-border-right: 1px #c0c0c0 solid;
+/*margin: 0 auto; /* センタリング */
+background: url(./images/sidbar.png) repeat-y left; /* サイドバーの背景画像 */
+background-color: #ffffff;  /*メインカラムの背景色 */
+border-left: 1px #c0c0c0 solid; /* 左の境界線 */
+border-right: 1px #c0c0c0 solid; /* 右の境界線 */
 }
 
-
+/* --- ヘッダ --- */
 #header {
-background-color: #ffd5ec;
-text-align: right;
-padding : 20px;
- p{
-text-align: left;
-
-}
+background-color: #df013a; /* ヘッダの背景色 */
+color: #ffffff;
 }
 
-
+/* --- ナビゲーション --- */
 #nav {
 float: left;
-width: 200px; 
+width: 200px; /* サイドバーの幅 */ 
+padding-left: 5px;
 }
 
-
+/* --- メインカラム --- */
 #content {
 float: left;
-width: 100%;
+width: 1100px; /* メインカラムの幅 */
 }
 
+/* --- フッタ --- */
 #footer {
-padding: 40;
-text-align: center;
+clear: left; /* フロートのクリア */
 width: 100%;
-background-color: #aeffbd;
-bottom:0;
+background-color: #aeffbd; /* フッタの背景色 */
 }
 
+/* ---サムネイル画像表示--- */
 
-
-ul.thumbnail { list-style-type: none; }
+ul.thumbnail { list-style-type: none; }	/* リストマークを非表示 */
 ul.thumbnail li {
- float: left;
- margin: 10px 0 0 10px;
+ float: left;				/* 左回り込み */
+ margin: 10px 0 0 10px;			   	      /* 上と左にスペース 10px */
 }
 ul.thumbnail li img {
- border: 2px solid #bbb;
- width: 100px;
- height: 100px;
+ border: 2px solid #bbb;		/* 画像に 2pxの枠 */
+ width: 100px;	   			   	  /* 画像の幅 */
+ height: 100px;							/* 画像の高さ */
 }
-ul.thumbnail li a { display: block; }
+ul.thumbnail li a { display: block; }	/* リンクをブロックレベルへ */
 
 .clearfix:after {
  content: ".";
@@ -77,28 +82,32 @@ ul.thumbnail li a { display: block; }
 
 .clearfix { display: inline-table; }
 
+/*ログイン状態*/
 #log{
 float: left;
-width: 100%;
+width: 100%
 }
-@import url('http://fonts.googleapis.com/css?family=Open+Sans:400');
 
+/* Fonts */
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400);
 
-@import url('http://weloveiconfonts.com/api/?family=fontawesome');
+/* fontawesome */
+@import url(http://weloveiconfonts.com/api/?family=fontawesome);
 [class*="fontawesome-"]:before {
   font-family: 'FontAwesome', sans-serif;
 }
 
+/* Simple Reset */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-
+/* body */
 body {
   background: #e9e9e9;
   color: #5e5e5e;
   font: 400 87.5%/1.5em 'Open Sans', sans-serif;
 }
 
-
+/* Form Layout */
 .form-wrapper {
   background: #fafafa;
   margin: 3em auto;
@@ -143,7 +152,6 @@ form {
 }
 
 .button-panel .button {
-margin: 2em 0 0;
   background: #f16272;
   border: none;
   color: #fff;

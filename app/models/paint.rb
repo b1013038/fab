@@ -7,4 +7,7 @@ class Paint < ActiveRecord::Base
   )
 
 validates :userid, :category, :filedata, :title, presence: true
+
+ # validates :userid, length: { in: 3..10 }
+ # validates :title, length: { in: 1..15 }
 end

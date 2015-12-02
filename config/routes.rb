@@ -21,6 +21,8 @@ Rails.application.routes.draw do
 
 #  get 'convert' => 'pic#convert'
 
+#  post 'convert_potrace' => 'pic#convert_potrace'
+
   post 'convert' => 'pic#convert'
 
 #  get ':userid/download/:id' => 'pic#download'
@@ -30,6 +32,8 @@ Rails.application.routes.draw do
   get 'logoutuser' => 'pic#logout_user'
 
 #  get 'pic/icon' => 'pic#icon'
+
+  post 'signinuser' => 'pic#signin_user'
 
   post 'forgot' => 'pic#forgot_passwd'
 
