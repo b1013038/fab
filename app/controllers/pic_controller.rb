@@ -2,7 +2,6 @@
 # coding: utf-8
 
 class PicController < ApplicationController
-#  helper_method :current_user, :logged_in?
   helper_method :current_user, :logged_in? 
   protect_from_forgery except: :pic_action
   
@@ -12,7 +11,6 @@ class PicController < ApplicationController
     @img = Paint.last(10)
     @test = request.session_options[:id]
     @id = session[:session_id]
-
   end
   
   def to_blob
@@ -23,56 +21,34 @@ class PicController < ApplicationController
       blob = "id can't be nil."
     end
     render json: blob
-    #respond_to do |format|
-    #  format.any {render json: blob.to_json}
-    #end
   end
   
   def show
-    #if pic = Paint.find(params[:id])
-    #  pic = Paint.find_by(title: URI.unescape(params[:title]), userid: URI.unescape(params[:userid]))
-    #end
     if params[:category]
-      @img = Paint.where(category: params[:category])
-    #else
-      #if self.logged_in?
-        @img = Paint.where(userid: self.current_user.userid) if params[:category] == "-1";
-     # else
-     #   @img = Paint.where(category: 1)
-     # end
+      if self.logged_in? && params[:category] == "-1"
+        @img = Paint.where(userid: Login.find_by_kie(request.env['HTTP_COOKIE'].split('=')[1]).userid)
+      else
+        @img = Paint.where(category: params[:category])
+      end
     end
     render "show", formats: [:json], handlers: [:jbuilder]
-  # render :json
-    #respond_to do |format|
-     # if params[:id].nil?
-     #   format.png {send_file("public/img/#{pic.title}.png", :disposition => 'inline')}
-     # format.htm
-     #   format.json
-     # else
-     #   format.png {redirect_to action: 'index', notice: "missing id!"}
-     # end
-   # end
   end
   
   def img_show
     if params[:category]
-      @img = Paint.where(category: params[:category])
-    else
-      if self.logged_in?
+      if self.logged_in? && params[:category] == "-1"
         @img = Paint.where(userid: self.current_user.userid)
       else
-        @img = Paint.where(category: 1)
+        @img = Paint.where(category: params[:category])
       end
     end
-    #render 'img_show', format: [:json], handlers: [:jbuilder]
     respond_to do |format|
       format.html
-     # format.json
+      format.json
     end
   end
   
   def download
-    # @pic = Paint.new
     if @pic = Paint.find(params[:id])
       # send_data("public/img/#{pic.title}.png", :type => 'image/png', :disposition => 'inline')
     end
@@ -82,7 +58,7 @@ class PicController < ApplicationController
     #    if Login.find_by_kie(request.session_options[:id])
     pic = Paint.new
     pic.userid = params[:userid]
-    pic.title = "#{params[:title]}_#{params[:userid]}_" + Time.now.strftime("%y%m%H%M%S")
+    pic.title = "#{params[:title]}_#{params[:userid]}_#{params[:category]}_" + Time.now.strftime("%y%m%H%M%S")
     file = Base64.decode64(params[:filedata])
     File.open("public/img/#{pic.title}.png", 'wb') { |f|
       f.write(file)
@@ -140,7 +116,7 @@ class PicController < ApplicationController
     _svg.format = "pdf"
     _pdf = _svg.to_blob
     #send_data(_pdf, :filename => "convert#{params[:title]}.svg", :disposition => 'attachment')
-    send_data(_pdf, :type => "message/pdf", :filename => "convert#{params[:title]}.pdf", :disposition => 'attachment')
+    send_data(_pdf, :type => "message/pdf", :filename => "convert_#{params[:title].split("_")[0]}.pdf", :disposition => 'attachment')
   end
   
   def forgot_passwd
@@ -193,18 +169,18 @@ class PicController < ApplicationController
   def logout_user
     usr = Login.where(kie: session[:session_id])
     usr.update_all(kie: "logout")
-    request.env[ActiveRecord::SessionStore::Session.primary_key] = nil         
-    reset_session
-    request.session_options[:id] = SecureRandom.hex(16)
+    #request.env[ActiveRecord::SessionStore::Session.primary_key] = nil         
+    #reset_session
+    #request.session_options[:id] = SecureRandom.hex(16)
     #usr.kie = "a"
     #usr.save
-    session[:session_id] = nil
-    cookies.delete :_ryokutya_session
+    #session[:session_id] = nil
+    #cookies.delete :_ryokutya_session
     #self.current_user = nil
     #redirect_to action: "index"
     #self.reset_and_create_session_for_active_record
     respond_to do |format|
-      if cookies[:_ryokutya_session].nil?
+      if usr = Login.where(kie: session[:session_id])
         format.html {redirect_to root_url, notice: 'ログアウトしました！'}
         format.json {render json: "success"}
       else
@@ -249,21 +225,11 @@ class PicController < ApplicationController
   end
   
   def nothing
-    #render json: "a"
-#   request.env[ActiveRecord::SessionStore::Session.primary_key] = nil
-#    reset_session
     session[:session_id] = SecureRandom.hex(16)
-    #request.session_options[:id] = SecureRandom.hex(16)
-    #session[:session_id] = request.session_options[:id]
-    #request.session_options[:id] = $kie
-    #request.session_options[:id] = SecureRandom.hex(16)
-    #cookies[:_ryokutya_session] = request.session_options[:id]
-    #session[:session_id] = request.session_options[:id]
-    # request.session_options[:id]
     cookies[:_ryokutya_session] = {value: session[:session_id], httponly: true, path: "/signinuser"}
     respond_to do |format|
       #format.html
-      format.json {render json: "asdfghjklkjhgfdsdfghjk"}
+      format.json {render json: "nothing"}
     end
   end
   

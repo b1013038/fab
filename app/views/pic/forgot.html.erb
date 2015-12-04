@@ -1,16 +1,30 @@
-<% provide(:title, "忘れた") %>
-<% if logged_in? %>
-もう<%= current_user.userid %>でログインしてるよ<br>
-<% else %>
-平文での通信だから個人情報に関わらない程度のものを<br>
-<%= form_tag(:action => :forgot_passwd) do %>
-ユーザーID <%= text_field_tag :userid  %><br>
-新しいパスワード <%= password_field_tag :password %><br>
-<br>
-Solve following questions.<br>
-What is the smallest Sierpiński number?<br>
-<%= number_field_tag :question  %>
-<%= submit_tag "パスワード再設定" %>
-<% end %>
-<% end %>
-<%= link_to "home", :action => "index" %>
+<html>
+  <header>
+    <meta charset="utf-8">
+    <% provide(:title, "forgot") %>
+  </header>
+  <body>
+    平文での通信だから個人情報に関わらない程度のものを<br>
+    <%= form_tag(:action => :forgot_passwd) do %>
+    <form>
+      <div class="form-item">
+        <%= label_tag  :userID %>
+        <%= text_field_tag :userid %>
+      </div>
+      <div class="form-item">
+        <%= label_tag :password %>
+        <%= password_field_tag :password %>
+      </div>
+      <br><br>
+      <div class="form-item">
+        Solve following questions.<br>
+        What is the smallest Sierpiński number?<br>
+        <%= number_field_tag :question  %>
+      </div>
+      <div class="button-panel">
+        <%= submit_tag "RECORD", class: "button" %>
+      </div>
+    </form>
+    <% end %>
+  </body>
+</html>

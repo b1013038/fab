@@ -1,8 +1,9 @@
 <div id="header">
-<p>サイト名募集</p>
-<% if logged_in? %>
-こんにちは, <%= current_user.userid %>さん(<%= link_to "ログアウト", :action => 'logout_user' %>)
-<% else %>
-あなたはログインしていません(<%= link_to "ログイン", action: 'login' %>|<%= link_to "新規登録", action: "register" %>)
-<% end %>
+  <%= link_to image_tag("/contents/sitetitle.png", size: "125x34"), action: 'index' %>
+  <p><% if logged_in? %>
+    こんにちは, <%= current_user.userid %>さん(<%= link_to "ログアウト", :action => 'logout_user' %>)
+    <% else %>
+    あなたはログインしていません(<%= link_to "ログイン", action: 'login' %>|<%= link_to "新規登録", action: "register" %>)
+    <% end %>
+  </p>
 </div>

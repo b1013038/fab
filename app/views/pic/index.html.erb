@@ -4,62 +4,52 @@
   </head>
   <body>
     <%= render 'pic/header' %>
+    <div id="container">
+
+    <%= render 'pic/sidbar' %>
     <% flash.each do |key, value| %>
     <%= content_tag(:div, value, class: "#{key}") %>
     <% end %>
     
     セッションID
-<% if @test %>
- "<%= @test %>"
-<% else %>
-ない
-<% end %>
-<%= @id %>
-<br>
-<%= link_to 'contents', action: 'img_show' %><br>
-<br>
-<br>
-新着順 最新10件<br>
-<% @img.reverse_each do |img| %>
-<%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
-<% end %>
-<br>
-
-
-POSTテスト用<br>
-<%= form_tag(:action => :create) do %>
-ユーザーID<%= text_field_tag :userid %><br>
-作品のタイトル<%= text_field_tag :title %><br>
-カテゴリー<%= number_field_tag :category %><br>
-Base64化したPNG画像<%= text_area_tag :filedata %><br>
-<%= submit_tag "images" %><br>
-<% end %>
-<br>
-覚え書き<br>
-サイトの色本家に<br>
-
-注意書き<br>
-ちょっと仕様変更<br>
-ヘッダー部分を部分テンプレートに変更　フッターも変更<br>
-クッキーを捨てるまでセッションは持続<br>
-クッキーにセッション内容は保持されない<br>
-クッキーを配布するより前にコントローラが動くため直接postするとセッションエラーでうまく働かないことあり<br>
-なんとかしてcookieを取得する設定にすること<br>
-確認用に自身のセッションIDを表示<br>
-ルーティングに問題が無ければこれで決定<br>
-AuthenticityTokenはhtmlに組み込まれているけど特に意味は無い はず　なかった<br>
-エラー送信の内容を決めること　とりあえずエラー文をそのままjsonにして返却<br>
-safari9.0.1, chrome46.0.2490.86 (64-bit),firefox41.0.1で正常に表示確認IEは多分無理<br>
-<br>
-cookieで簡単なセッション管理してるからcookieを消すとログイン解除されるよ<br>
-cookieにセッション内容は保存されないから安心してほしい<br>
-cookie削除してそのまま何かしらのaction呼び出したらエラー（InvalidAuthenticityTo
-ken）吐くよ 吐かないよ<br>
-Base64に"data:image/png;base64,"　が入ってると正しく保存できないよ<br>
-平文で通信してるから通信内容がだだ漏れだけれど許してほしい<br>
-基本的にUTF-8だから日本語入力はできるよ そのうちできなくするよ できなくなったよ<br>
-デザインがしっちゃかめっちゃかなのもゆるしてほしい<br>
-<br>
-<%= render 'pic/footer' %>
+    <% if @test %>
+    "<%= @test %>"
+    <% else %>
+    ない
+    <% end %>
+    <%= @id %>
+    <br>
+    <div id="content">
+      新着順 最新10件<br>
+	<% @img.reverse_each do |img| %>
+	<ul class="thumbnail clearfix">
+	  <li>
+	    <%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
+	    <%= link_to img.title.split("_")[0], action: 'download', id: img.id %>
+	  </li>
+	</ul>
+	<% end %>
+      <br>
+      
+      
+      POSTテスト用<br>
+      <%= form_tag(:action => :create) do %>
+      ユーザーID<%= text_field_tag :userid %><br>
+      作品のタイトル<%= text_field_tag :title %><br>
+      カテゴリー<%= number_field_tag :category %><br>
+      Base64化したPNG画像<%= text_area_tag :filedata %><br>
+      <%= submit_tag "images" %><br>
+      <% end %>
+      <br>
+      注意書き<br>
+      リダイレクトにはリクエストがない<br>
+      ちょっと仕様変更<br>
+      確認用に自身のセッションIDを表示<br>
+      ルーティングに問題が無ければこれで決定<br>
+      エラー送信の内容を決めること　とりあえずエラー文をそのままjsonにして返却<br>
+      safari9.0.1, chrome46.0.2490.86 (64-bit),firefox41.0.1で正常に表示確認IEは多分無理<br>
+      サイドバーが下まで行かないことがある
+    </div>
+    <%= render 'pic/footer' %>
   </body>
 </html>

@@ -1,19 +1,27 @@
 <% provide(:title, "コンテンツページ") %>
 <%= render 'pic/header' %>
-カテゴリー選択<br>
-<%= link_to "自分の作品", action: "img_show", category: "-1" %>
-<%= link_to "獣", action: "img_show", category: "0" %>
-<%= link_to "動物", action: "img_show", category: "1" %>
-<%= link_to "生き物", action: "img_show", category: "2" %>
-<%= link_to "生物", action: "img_show", category: "3" %>
-<%= link_to "アニマル", action: "img_show", category: "4" %>
-<%= link_to "生類", action: "img_show", category: "5" %>
-<%= link_to "生類", action: "img_show", category: "6" %>
-<%= link_to "生類", action: "img_show", category: "7" %>
-<br>
-<% @img.reverse_each do |img| %>
-  <%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %><br>
-<% end %>
-  <%= link_to "home", :action => "index" %>
-
+<div id="container">
+  <%= render 'pic/sidbar' %>
+  <div id="content">
+    カテゴリー選択<br>
+    <%= link_to "自分の作品", action: "img_show", category: "-1" %>
+    <%= link_to image_tag('/contents/character.png'), action: "img_show", category: "0" %>
+    <%= link_to image_tag('/contents/plant.png'), action: "img_show", category: "1" %>
+    <%= link_to image_tag('/contents/food2.png'), action: "img_show", category: "2" %>
+    <%= link_to image_tag('/contents/pepple.png'), action: "img_show", category: "3" %>
+    <%= link_to image_tag('/contents/animal.png'), action: "img_show", category: "4" %>
+    <%= link_to image_tag('/contents/car2.png'), action: "img_show", category: "5" %>
+    <%= link_to image_tag('/contents/mark.png'), action: "img_show", category: "6" %>
+    <%= link_to image_tag('/contents/etc.png'), action: "img_show", category: "7" %>
+    <br>
+    <% @img.reverse_each do |img| %>
+    <ul class="thumbnail clearfix">
+      <li>
+	<%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
+	<%= link_to img.title.split("_")[0].truncate(10), action: 'download', id: img.id %>
+      </li>
+    </ul>
+    <% end %>
+  </div>
+</div>
 <%= render 'pic/footer' %>

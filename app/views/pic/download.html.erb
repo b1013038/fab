@@ -1,21 +1,26 @@
-<% provide(:title, "ダウンロード") %>
 <HTML>
   <HEAD>
+    <% provide(:title, "ダウンロード") %>
   </HEAD>
   <BODY>    
     <%= render 'pic/header' %>
-    <%= image_tag("/img/#{@pic.title}.png") %><br>
-    <%= form_tag action: "convert" do %>
-    <%= select_tag :size, options_for_select([["えびみりん(100x100)", "100x100"],["ハーベスト(90x90)","90x90"],["tesuto(300x300)","300x300"]]) %>
-<%= hidden_field_tag :id, @pic.id %>
-<%= hidden_field_tag :title, @pic.title %>
-<%= submit_tag "download!" %>
-<% end %>
-    <% if logged_in? %>
-    <%= link_to "contents page", :action=> "img_show", userid: params[:userid] %><br>
-    <% end %>
-    <%= link_to "home", :action=> "index" %>
+    <div id="container">
+      <%= render 'pic/sidbar' %>
+      <div id="content">
+	<p>
+	<h1><%= "#{@pic.title.split("_")[0]}" %></h1>
+        <%= "#{@pic.userid}さんの作品" %><br>
+        <%= link_to image_tag("/contents/likeit.jpeg", size: "40x40"), id: @pic.id %><br>
+	<%= image_tag "/img/#{@pic.title}.png" %>
+	</p>
+	<%= form_tag action: "convert" do %>
+	<%= select_tag :size, options_for_select([["えびみりん(100x100)", "100x100"],["ハーベスト(90x90)","90x90"],["tesuto(300x300)","300x300"]]) %>
+	<%= hidden_field_tag :id, @pic.id %>
+	<%= hidden_field_tag :title, @pic.title %>
+	<%= submit_tag "download!" %>
+	<% end %>
+      </div>
+    </div>
     <%= render 'pic/footer' %>
   </BODY>
-  
 </HTML>

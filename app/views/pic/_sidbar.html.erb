@@ -1,0 +1,13 @@
+<div id="nav">
+    <%= link_to "Home", action: "index" %><br>
+    <% if logged_in? %>
+        <%= link_to 'コンテンツ', action: "img_show", category: -1 %><br>
+        <%= link_to 'ログアウト', :action => 'logout_user' %><br>
+    <% else %>
+        <%= link_to "サインイン", action: "login" %><br>
+	<%= link_to "コンテンツ", action: "img_show", category: -1 %><br>
+        <%= link_to "新規登録", action: "register" %><br>
+        <%= link_to "パスワード忘れた(未実装)", action: "forgot" %><br>
+            
+    <% end %>
+</div>

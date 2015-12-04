@@ -1,0 +1,3 @@
+<div id="footer">
+copyright <%= link_to "©FabLabHakodate" All Right Reserved.
+</div>

@@ -11,6 +11,7 @@ padding: 0;
 background-color: #ffffff; /* ページの背景色 */
 color: #000000; /* 全体の文字色 */
 font-size: 100%; /* 全体の文字サイズ */
+height: 100%;
 }
 
 /* --- 全体のリンクテキスト --- */ 
@@ -26,16 +27,22 @@ a:active { color: #ff0000; }
 width: 100%; /* ページの幅 */
 float: left;
 /*margin: 0 auto; /* センタリング */
-background: url(./images/sidbar.png) repeat-y left; /* サイドバーの背景画像 */
+background: url(/contents/sidbar.png) repeat-y left; /* サイドバーの背景画像 */
 background-color: #ffffff;  /*メインカラムの背景色 */
 border-left: 1px #c0c0c0 solid; /* 左の境界線 */
 border-right: 1px #c0c0c0 solid; /* 右の境界線 */
+height: 100%;
 }
 
 /* --- ヘッダ --- */
 #header {
+padding:10px;
 background-color: #df013a; /* ヘッダの背景色 */
 color: #ffffff;
+ p{
+float: right;
+text-align: right;
+}
 }
 
 /* --- ナビゲーション --- */
@@ -43,12 +50,16 @@ color: #ffffff;
 float: left;
 width: 200px; /* サイドバーの幅 */ 
 padding-left: 5px;
+height: 100%;
 }
 
 /* --- メインカラム --- */
 #content {
 float: left;
 width: 1100px; /* メインカラムの幅 */
+padding-bottom:20px;
+
+height: 100%;
 }
 
 /* --- フッタ --- */
@@ -56,19 +67,25 @@ width: 1100px; /* メインカラムの幅 */
 clear: left; /* フロートのクリア */
 width: 100%;
 background-color: #aeffbd; /* フッタの背景色 */
+height:20px;
+position:fixed;
+bottom:0;
+     p{
+     text-align:center;
+}
 }
 
 /* ---サムネイル画像表示--- */
 
 ul.thumbnail { list-style-type: none; }	/* リストマークを非表示 */
 ul.thumbnail li {
- float: left;				/* 左回り込み */
- margin: 10px 0 0 10px;			   	      /* 上と左にスペース 10px */
+ float: none;				/* 左回り込み */
+ margin: 30px 0 0 10px;			   	      /* 上と左にスペース 10px */
 }
 ul.thumbnail li img {
  border: 2px solid #bbb;		/* 画像に 2pxの枠 */
- width: 100px;	   			   	  /* 画像の幅 */
- height: 100px;							/* 画像の高さ */
+ width: 150px;	   			   	  /* 画像の幅 */
+ height: 150px;							/* 画像の高さ */
 }
 ul.thumbnail li a { display: block; }	/* リンクをブロックレベルへ */
 

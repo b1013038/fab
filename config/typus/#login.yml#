@@ -1,0 +1,8 @@
+# Use the README file as a reference to customize settings.
+
+Login:
+  fields:
+    default: userid, kie
+    form: userid, password_hash, password_salt, kie
+  relationships: 
+  application: Application
