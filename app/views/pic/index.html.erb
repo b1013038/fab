@@ -1,8 +1,5 @@
-<html>
-  <head>
+
     <% provide(:title, "メインページ") %>
-  </head>
-  <body>
     <%= render 'pic/header' %>
     <div id="container">
 
@@ -20,7 +17,7 @@
     <%= @id %>
     <br>
     <div id="content">
-      新着順 最新10件<br>
+      <h1>新着順 最新10件</h1>
 	<% @img.reverse_each do |img| %>
 	<ul class="thumbnail clearfix">
 	  <li>
@@ -50,6 +47,5 @@
       safari9.0.1, chrome46.0.2490.86 (64-bit),firefox41.0.1で正常に表示確認IEは多分無理<br>
       サイドバーが下まで行かないことがある
     </div>
+</div>
     <%= render 'pic/footer' %>
-  </body>
-</html>

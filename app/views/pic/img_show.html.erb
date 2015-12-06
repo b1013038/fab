@@ -3,25 +3,70 @@
 <div id="container">
   <%= render 'pic/sidbar' %>
   <div id="content">
-    カテゴリー選択<br>
-    <%= link_to "自分の作品", action: "img_show", category: "-1" %>
-    <%= link_to image_tag('/contents/character.png'), action: "img_show", category: "0" %>
-    <%= link_to image_tag('/contents/plant.png'), action: "img_show", category: "1" %>
-    <%= link_to image_tag('/contents/food2.png'), action: "img_show", category: "2" %>
-    <%= link_to image_tag('/contents/pepple.png'), action: "img_show", category: "3" %>
-    <%= link_to image_tag('/contents/animal.png'), action: "img_show", category: "4" %>
-    <%= link_to image_tag('/contents/car2.png'), action: "img_show", category: "5" %>
-    <%= link_to image_tag('/contents/mark.png'), action: "img_show", category: "6" %>
-    <%= link_to image_tag('/contents/etc.png'), action: "img_show", category: "7" %>
-    <br>
-    <% @img.reverse_each do |img| %>
-    <ul class="thumbnail clearfix">
-      <li>
-	<%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
-	<%= link_to img.title.split("_")[0].truncate(10), action: 'download', id: img.id %>
-      </li>
-    </ul>
-    <% end %>
+    <h1>カテゴリー選択</h1>
+    <p>
+      <% if params[:category] == "-1" %>
+      <%= link_to image_tag('/contents/content.png'), action: "img_show", category: "-1" %>
+      <% else %>
+      <%= link_to image_tag('/contents/content2.png'), action: "img_show", category: "-1" %>
+      <% end %>
+      
+      <% if params[:category] == "0" %>
+      <%= link_to image_tag('/contents/chara.png'), action: "img_show", category: "0" %>
+      <% else %>
+      <%= link_to image_tag('/contents/chara2.png'), action: "img_show", category: "0" %>
+      <% end %>
+      
+      <% if params[:category] == "1" %>
+      <%= link_to image_tag('/contents/plant.png'), action: "img_show", category: "1" %>
+      <% else %>
+      <%= link_to image_tag('/contents/plant2.png'), action: "img_show", category: "1" %>
+      <% end %>
+      
+      <% if params[:category] == "2" %>
+      <%= link_to image_tag('/contents/food.png'), action: "img_show", category: "2" %>
+      <% else %>
+      <%= link_to image_tag('/contents/food2.png'), action: "img_show", category: "2" %>
+      <% end %>
+      
+      <% if params[:category] == "3" %>
+      <%= link_to image_tag('/contents/pepple.png'), action: "img_show", category: "3" %>
+      <% else %>
+      <%= link_to image_tag('/contents/pepple2.png'), action: "img_show", category: "3" %>
+      <% end %>
+      
+      <% if params[:category] == "4" %>
+      <%= link_to image_tag('/contents/animal.png'), action: "img_show", category: "4" %>
+      <% else %>
+      <%= link_to image_tag('/contents/animal2.png'), action: "img_show", category: "4" %>
+      <% end %>
+      
+      <% if params[:category] == "5" %>
+      <%= link_to image_tag('/contents/car.png'), action: "img_show", category: "5" %>
+      <% else %>
+      <%= link_to image_tag('/contents/car2.png'), action: "img_show", category: "5" %>
+      <% end %>
+      
+      <% if params[:category] == "6" %>
+      <%= link_to image_tag('/contents/mark.png'), action: "img_show", category: "6" %>
+      <% else %>
+      <%= link_to image_tag('/contents/mark2.png'), action: "img_show", category: "6" %>
+      <% end %>
+      
+      <% if params[:category] == "7" %>
+      <%= link_to image_tag('/contents/etc.png'), action: "img_show", category: "7" %>
+      <% else %>
+      <%= link_to image_tag('/contents/etc2.png'), action: "img_show", category: "7" %>
+      <% end %>
+    </p>
+      <% @img.reverse_each do |img| %>
+      <ul class="thumbnail clearfix">
+	<li>
+	  <%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
+	  <%= link_to img.title.split("_")[0].truncate(10), action: 'download', id: img.id %>
+	</li>
+      </ul>
+      <% end %>
   </div>
 </div>
 <%= render 'pic/footer' %>

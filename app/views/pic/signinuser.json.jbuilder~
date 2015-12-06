@@ -1,0 +1,4 @@
+json.status "error"
+json.error_code 101
+json.set! :error, 'login_error'
+end

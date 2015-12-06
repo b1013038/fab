@@ -25,13 +25,14 @@ class PicController < ApplicationController
   
   def show
     if params[:category]
-      if self.logged_in? && params[:category] == "-1"
-        @img = Paint.where(userid: Login.find_by_kie(request.env['HTTP_COOKIE'].split('=')[1]).userid)
+      if params[:category] == "-1"
+        @img = Paint.where(userid: Login.find_by_kie(request.session_options[:id]).userid)
       else
         @img = Paint.where(category: params[:category])
       end
     end
     render "show", formats: [:json], handlers: [:jbuilder]
+#    render json:
   end
   
   def img_show
@@ -139,14 +140,24 @@ class PicController < ApplicationController
       end
       Login.update(user.id, kie: request.env['HTTP_COOKIE'].split('=')[1])
       session[:session_id] = request.env['HTTP_COOKIE'].split('=')[1]
+      ssmsg = {'userid' => "#{params[:userid]}"}
       self.current_user = user
+      #msg = {'id' => user.userid}
+    else
+      error_message = {'error' => 'login_error'}
     end
-    
     if self.current_user.nil?
-       render json: "error_code:login_error #{cookies[:_ryokutya_session]} , #{request.session_options[:id]} , #{session[:session_id]}"
+      #render "signinuser", :formats => [:json], :handlers => [:jbuilder]
+      #render json: error_message
+      #render json: msg
+      #end
+      render json: error_message
+    else
+      #render json: error_message
+      render json: ssmsg
     end
   end
-
+  
   def login_user
     user = Login.new
     if user = Login.authenticate(params[:userid], params[:password])
@@ -168,6 +179,10 @@ class PicController < ApplicationController
   
   def logout_user
     usr = Login.where(kie: session[:session_id])
+    if request.env['HTTP_COOKIE'].split('=')[1]
+      usr = Login.where(kie: request.env['HTTP_COOKIE'].split('=')[1])
+    end
+    #usr = Login.where(kie: session[:session_id])
     usr.update_all(kie: "logout")
     #request.env[ActiveRecord::SessionStore::Session.primary_key] = nil         
     #reset_session

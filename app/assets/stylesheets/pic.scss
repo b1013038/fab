@@ -1,22 +1,26 @@
-// Place all the styles related to the pic controller here.
-// They will automatically be included in application.css.
-// You can use Sass (SCSS) here: http://sass-lang.com/
-
 @charset "utf-8";
 
 /* --- 全体の背景・テキスト --- */
+html {
+    height: 100%;
+margin: 0;
+padding: 0;
+}
+
+
 body {
 margin: 0;
 padding: 0;
 background-color: #ffffff; /* ページの背景色 */
 color: #000000; /* 全体の文字色 */
 font-size: 100%; /* 全体の文字サイズ */
+font: 400 87.5%/1.5em 'Open Sans', sans-serif;
+
 height: 100%;
 }
 
 /* --- 全体のリンクテキスト --- */ 
 table.header a:link { color: #ffffff; }
-table.header a:hover { color: #cccccc;}
 a:link { color: #2e8b57; }
 a:visited { color: #800080; }
 a:hover { color: #5f9ea0; }
@@ -26,40 +30,48 @@ a:active { color: #ff0000; }
 #container {
 width: 100%; /* ページの幅 */
 float: left;
+overflow: hidden;
 /*margin: 0 auto; /* センタリング */
-background: url(/contents/sidbar.png) repeat-y left; /* サイドバーの背景画像 */
+/*background: url(./images/sidbar.png) repeat-y left; /* サイドバーの背景画像 */
 background-color: #ffffff;  /*メインカラムの背景色 */
 border-left: 1px #c0c0c0 solid; /* 左の境界線 */
 border-right: 1px #c0c0c0 solid; /* 右の境界線 */
 height: 100%;
+p{
+pudding: 0% 0% 0% 10;
+}
 }
 
 /* --- ヘッダ --- */
 #header {
-padding:10px;
 background-color: #df013a; /* ヘッダの背景色 */
 color: #ffffff;
- p{
-float: right;
-text-align: right;
-}
 }
 
 /* --- ナビゲーション --- */
 #nav {
 float: left;
-width: 200px; /* サイドバーの幅 */ 
+width: 15%; /* サイドバーの幅 */
 padding-left: 5px;
+background-color: #ffb399;
+    -moz-background-size:auto 100%;
+    background-size:auto 100%;
+
 height: 100%;
 }
 
 /* --- メインカラム --- */
 #content {
 float: left;
-width: 1100px; /* メインカラムの幅 */
-padding-bottom:20px;
+width: 85%; /* メインカラムの幅 */
+pudding: 0% 20% 1% 20%;
 
 height: 100%;
+overflow: auto;
+}
+
+category {
+display: inline;
 }
 
 /* --- フッタ --- */
@@ -67,20 +79,14 @@ height: 100%;
 clear: left; /* フロートのクリア */
 width: 100%;
 background-color: #aeffbd; /* フッタの背景色 */
-height:20px;
-position:fixed;
-bottom:0;
-     p{
-     text-align:center;
-}
 }
 
 /* ---サムネイル画像表示--- */
 
 ul.thumbnail { list-style-type: none; }	/* リストマークを非表示 */
 ul.thumbnail li {
- float: none;				/* 左回り込み */
- margin: 30px 0 0 10px;			   	      /* 上と左にスペース 10px */
+ float: left;				/* 左回り込み */
+ margin: 10% 0 0 10%;			   	      /* 上と左にスペース 10px */
 }
 ul.thumbnail li img {
  border: 2px solid #bbb;		/* 画像に 2pxの枠 */
@@ -117,16 +123,10 @@ width: 100%
 /* Simple Reset */
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* body */
-body {
-  background: #e9e9e9;
-  color: #5e5e5e;
-  font: 400 87.5%/1.5em 'Open Sans', sans-serif;
-}
 
 /* Form Layout */
 .form-wrapper {
-  background: #fafafa;
+  background: #e9e9e9;
   margin: 3em auto;
   padding: 0 1em;
   max-width: 370px;
