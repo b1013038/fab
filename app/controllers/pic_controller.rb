@@ -26,9 +26,9 @@ class PicController < ApplicationController
   def show
     if params[:category]
       if params[:category] == "-1"
-        @img = Paint.where(userid: Login.find_by_kie(request.session_options[:id]).userid)
+        @img = Paint.where(userid: Login.find_by_kie(request.session_options[:id]).userid).reverse
       else
-        @img = Paint.where(category: params[:category])
+        @img = Paint.where(category: params[:category]).reverse
       end
     end
     render "show", formats: [:json], handlers: [:jbuilder]
@@ -52,38 +52,45 @@ class PicController < ApplicationController
   def download
     if @pic = Paint.find(params[:id])
       # send_data("public/img/#{pic.title}.png", :type => 'image/png', :disposition => 'inline')
+      @like = Likeit.find(params[:id])
+      @like = @like.id_id
     end
+  end
+
+  def likeit
+    if like = Likeit.find(params[:id])
+      #Likeit.update(params[:id], num)
+      like.id_id = like.id_id+1
+      like.save
+    end
+    redirect_to("http://paint.fablabhakodate.org/download?id=#{params[:id]}", notice: 'Like it!')
   end
   
   def create
     #    if Login.find_by_kie(request.session_options[:id])
     pic = Paint.new
-    pic.userid = params[:userid]
-    pic.title = "#{params[:title]}_#{params[:userid]}_#{params[:category]}_" + Time.now.strftime("%y%m%H%M%S")
-    file = Base64.decode64(params[:filedata])
-    File.open("public/img/#{pic.title}.png", 'wb') { |f|
-      f.write(file)
-    }
+    if Login.where(kie: request.env['HTTP_COOKIE'].split('=')[1])
+      pic.userid = params[:userid]
+      pic.title = "#{params[:title]}_#{params[:userid]}_#{params[:category]}_" + Time.now.strftime("%y%m%H%M%S") if params[:title];
+      file = Base64.decode64(params[:filedata])
+      File.open("public/img/#{pic.title}.png", 'wb') { |f|
+        f.write(file)
+      }
     #file_path = URI.escape(params[:userid]) + '/' + URI.escape(pic.title) + '.png'
-    pic.filedata = "http://paint.fablabhakodate.org/img/#{pic.title}.png"
-    pic.category = params[:category]
-    #    end
+      pic.filedata = "http://paint.fablabhakodate.org/img/#{pic.title}.png"
+      pic.category = params[:category]
+      #    end
+    end
     pic.save
     unless pic.save
       @pic_error_message = [pic.errors.full_messages].compact
     end
-#    respond_to do |format|
-#      if pic.save
-#        format.html {redirect_to index_url, notice: '成功！'}
-#        format.json {render json: pic}
-#      else
-#        format.html {redirect_to index_url, motice: '失敗'}
-#        format.json {render json: pic.errors.full_messages, status: :unprocessable_entity }
-#      end
-#    end
   end
 
   def convert_potrace
+    #
+    #未完成（メモリが足りない？か何かでエラー吐く）
+    #
     _filepath = "public/img/#{params[:title]}.png"
     image = Magick::Image.read(_filepath)[0]
     scale = params[:size].split("x")

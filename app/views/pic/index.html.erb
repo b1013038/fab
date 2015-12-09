@@ -1,51 +1,24 @@
-
-    <% provide(:title, "メインページ") %>
-    <%= render 'pic/header' %>
-    <div id="container">
-
-    <%= render 'pic/sidbar' %>
-    <% flash.each do |key, value| %>
-    <%= content_tag(:div, value, class: "#{key}") %>
+<% provide(:title, "メインページ") %>
+<%= render 'pic/header' %>
+<div id="container">
+  <%= render 'pic/sidbar' %>
+  <% flash.each do |key, value| %>
+  <%= content_tag(:div, value, class: "#{key}") %>
+  <% end %>
+  <br>
+  <div id="content">
+    <h1>せつめい</h1>
+aaaaaaaa
+    <h1>新着順 最新10件</h1>
+    <% @img.reverse_each do |img| %>
+    <ul class="thumbnail clearfix">
+      <li>
+	<%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
+	<%= link_to img.title.split("_")[0], action: 'download', id: img.id %>
+      </li>
+    </ul>
     <% end %>
-    
-    セッションID
-    <% if @test %>
-    "<%= @test %>"
-    <% else %>
-    ない
-    <% end %>
-    <%= @id %>
-    <br>
-    <div id="content">
-      <h1>新着順 最新10件</h1>
-	<% @img.reverse_each do |img| %>
-	<ul class="thumbnail clearfix">
-	  <li>
-	    <%= link_to (image_tag "/img/#{img.title}.png", size: "150x150"), action: 'download', id: img.id %>
-	    <%= link_to img.title.split("_")[0], action: 'download', id: img.id %>
-	  </li>
-	</ul>
-	<% end %>
-      <br>
-      
-      
-      POSTテスト用<br>
-      <%= form_tag(:action => :create) do %>
-      ユーザーID<%= text_field_tag :userid %><br>
-      作品のタイトル<%= text_field_tag :title %><br>
-      カテゴリー<%= number_field_tag :category %><br>
-      Base64化したPNG画像<%= text_area_tag :filedata %><br>
-      <%= submit_tag "images" %><br>
-      <% end %>
-      <br>
-      注意書き<br>
-      リダイレクトにはリクエストがない<br>
-      ちょっと仕様変更<br>
-      確認用に自身のセッションIDを表示<br>
-      ルーティングに問題が無ければこれで決定<br>
-      エラー送信の内容を決めること　とりあえずエラー文をそのままjsonにして返却<br>
-      safari9.0.1, chrome46.0.2490.86 (64-bit),firefox41.0.1で正常に表示確認IEは多分無理<br>
-      サイドバーが下まで行かないことがある
+    safari9.0.1, chrome46.0.2490.86 (64-bit),firefox41.0.1で正常に表示確認IEは多分無理
     </div>
 </div>
-    <%= render 'pic/footer' %>
+<%= render 'pic/footer' %>

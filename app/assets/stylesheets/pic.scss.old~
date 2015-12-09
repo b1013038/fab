@@ -2,7 +2,7 @@
 
 /* --- 全体の背景・テキスト --- */
 html {
-height: 100%;
+    height: 100%;
 margin: 0;
 padding: 0;
 }
@@ -15,6 +15,7 @@ background-color: #ffffff; /* ページの背景色 */
 color: #000000; /* 全体の文字色 */
 font-size: 100%; /* 全体の文字サイズ */
 font: 400 87.5%/1.5em 'Open Sans', sans-serif;
+
 height: 100%;
 }
 
@@ -36,23 +37,26 @@ background-color: #ffffff;  /*メインカラムの背景色 */
 border-left: 1px #c0c0c0 solid; /* 左の境界線 */
 border-right: 1px #c0c0c0 solid; /* 右の境界線 */
 height: 100%;
+p{
+pudding: 0% 0% 0% 10;
+}
 }
 
 /* --- ヘッダ --- */
 #header {
 background-color: #df013a; /* ヘッダの背景色 */
 color: #ffffff;
-padding: 0.1% 1% 0.1% 1%;
 }
 
 /* --- ナビゲーション --- */
 #nav {
 float: left;
 width: 15%; /* サイドバーの幅 */
-padding-left: 10px;
+padding-left: 5px;
 background-color: #ffb399;
--moz-background-size:auto 100%;
-background-size:auto 100%;
+    -moz-background-size:auto 100%;
+    background-size:auto 100%;
+
 height: 100%;
 }
 
@@ -61,11 +65,13 @@ height: 100%;
 float: left;
 width: 85%; /* メインカラムの幅 */
 pudding: 0% 20% 1% 20%;
+
 height: 100%;
 overflow: auto;
-p{
-margin:0% 0% 0% 2%;
 }
+
+category {
+display: inline;
 }
 
 /* --- フッタ --- */
@@ -73,9 +79,6 @@ margin:0% 0% 0% 2%;
 clear: left; /* フロートのクリア */
 width: 100%;
 background-color: #aeffbd; /* フッタの背景色 */
-p{
-text-align:center;
-}
 }
 
 /* ---サムネイル画像表示--- */
@@ -198,12 +201,4 @@ form {
 
 .form-footer a:hover {
   border-bottom: 1px dotted #8c8c8c;
-}
-
-.btn{
-background: #EEE;
-border: 1px solid #DDD;
-color: #111;
-width: 100px;
-padding: 10px 0;
 }

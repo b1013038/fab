@@ -17,6 +17,8 @@ Rails.application.routes.draw do
 
   get 'noooo' => 'pic#nothing'
 
+  get 'likeit' => 'pic#likeit'
+
 #  get 'download' => 'pic#download'
 
 #  get 'convert' => 'pic#convert'

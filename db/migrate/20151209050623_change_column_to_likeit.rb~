@@ -1,0 +1,5 @@
+class ChangeColumnToLikeit < ActiveRecord::Migration
+  def change
+    change_column :likeits ,:num, :integer, null: false, default: 0
+  end
+end

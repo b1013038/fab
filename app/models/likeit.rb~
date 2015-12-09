@@ -1,0 +1,4 @@
+class Likeit < ActiveRecord::Base
+  belongs_to :paint
+  accepts_nested_attributes_for :paint
+end

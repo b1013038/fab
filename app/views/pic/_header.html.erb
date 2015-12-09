@@ -1,9 +1,8 @@
 <div id="header">
-  <%= link_to image_tag("/contents/sitetitle.png", size: "125x34"), action: 'index' %>
-  <p><% if logged_in? %>
+  <%= link_to image_tag("/contents/sitetitle.png", size: "187x51"), action: 'index' %>
+  <div align="right"><% if logged_in? %>
     こんにちは, <%= current_user.userid %>さん(<%= link_to "ログアウト", :action => 'logout_user' %>)
     <% else %>
-    あなたはログインしていません(<%= link_to "ログイン", action: 'login' %>|<%= link_to "新規登録", action: "register" %>)
-    <% end %>
-  </p>
+    あなたはログインしていません(<%= link_to "ログイン", action: 'login' %>|<%= link_to "新規登録", action: "register" %>)<% end %>
+  </div>
 </div>
